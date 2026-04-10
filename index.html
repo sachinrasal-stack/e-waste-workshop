@@ -3,132 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Waste Awareness Workshop</title>
+    <title>E-Waste Awareness Workshop | TechVidya & ProSAR</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #2d6a4f; /* Eco Green */
-            --secondary: #1b4332;
-            --accent: #ff9f1c; /* Sales Orange */
-            --light: #f8f9fa;
-            --white: #ffffff;
+            --primary-green: #2d6a4f;
+            --dark-green: #1b4332;
+            --action-orange: #ff8c00;
+            --text-dark: #2d3436;
+            --bg-light: #f1f3f5;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--light); color: #333; line-height: 1.6; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
 
-        /* Header Section */
+        /* Hero Section */
         header {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                        url('https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=1000');
+            background: linear-gradient(135deg, rgba(27,67,50,0.95), rgba(45,106,79,0.85)), 
+                        url('https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&q=80&w=1000');
             background-size: cover;
-            background-position: center;
             color: white;
-            padding: 60px 20px;
+            padding: 80px 20px 60px;
             text-align: center;
         }
 
-        .badge {
-            background: var(--accent);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9rem;
+        .promo-pill {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            padding: 5px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
             display: inline-block;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
-        h1 { font-size: 2.2rem; margin-bottom: 10px; }
+        h1 { font-size: 2.4rem; line-height: 1.2; margin-bottom: 15px; font-weight: 800; }
+
+        /* Countdown Timer */
+        #timer {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .timer-unit { background: white; color: var(--dark-green); padding: 10px; border-radius: 8px; min-width: 60px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
         /* Content Container */
-        .container { max-width: 500px; margin: -30px auto 100px; background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .main-card { 
+            max-width: 600px; 
+            margin: -40px auto 120px; 
+            background: white; 
+            border-radius: 24px; 
+            padding: 30px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+        }
 
-        .highlights { display: flex; justify-content: space-between; margin: 25px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 15px 0; }
-        .highlight-item { text-align: center; flex: 1; }
-        .highlight-item i { color: var(--primary); font-size: 1.5rem; margin-bottom: 5px; }
-        .highlight-item p { font-size: 0.8rem; font-weight: bold; }
+        .problem-statement {
+            background: #fff5f5;
+            border-left: 4px solid #ff7675;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+        }
 
-        .details-list { list-style: none; margin: 20px 0; }
-        .details-list li { margin-bottom: 15px; display: flex; align-items: center; font-size: 1.1rem; }
-        .details-list i { color: var(--primary); width: 30px; }
+        /* Feature Grid */
+        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
+        .feature-box {
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 16px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .feature-box i { font-size: 2rem; color: var(--primary-green); margin-bottom: 10px; }
+        .feature-box h4 { font-size: 0.9rem; color: #555; }
 
-        .tagline { font-style: italic; color: #666; text-align: center; margin: 20px 0; }
+        /* Details Section */
+        .event-details {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+        }
+        .detail-row { display: flex; align-items: center; margin-bottom: 12px; font-size: 1.1rem; }
+        .detail-row i { color: var(--primary-green); margin-right: 15px; width: 20px; }
 
-        /* The Sticky CTA Button */
-        .cta-container {
+        /* Sticky Footer Button */
+        .sticky-cta {
             position: fixed;
             bottom: 0;
             left: 0;
-            right: 0;
+            width: 100%;
             background: white;
-            padding: 15px 20px;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
             z-index: 1000;
-            display: flex;
-            justify-content: center;
+            text-align: center;
         }
 
-        .btn {
-            background: var(--accent);
+        .btn-primary {
+            display: block;
+            background: var(--action-orange);
             color: white;
             text-decoration: none;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(255, 159, 28, 0.4);
-            transition: transform 0.2s;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(255, 140, 0, 0.3);
+            transition: transform 0.2s ease;
         }
 
-        .btn:active { transform: scale(0.95); }
+        .btn-primary:active { transform: scale(0.98); }
 
-        .partner-logo { font-size: 0.8rem; color: #888; text-align: center; margin-top: 20px; }
+        .branding { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; text-align: center; font-size: 0.8rem; color: #999; }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="badge">FREE FOR PROFESSIONALS</div>
+    <div class="promo-pill"><i class="fas fa-shield-alt"></i> Compliance & Security Focused</div>
     <h1>E-Waste Awareness Workshop</h1>
-    <p>Empowering IT Professionals for a Greener Tomorrow</p>
+    <p>Protect your data. Protect our planet.</p>
+    
+    <div id="timer">
+        <div class="timer-unit"><span id="days">--</span><br><small>Days</small></div>
+        <div class="timer-unit"><span id="hours">--</span><br><small>Hrs</small></div>
+        <div class="timer-unit"><span id="mins">--</span><br><small>Mins</small></div>
+    </div>
 </header>
 
-<div class="container">
-    <p>As IT professionals, legal e-waste disposal is not just an option — it is our responsibility towards our company, environment, and data security.</p>
+<div class="main-card">
+    <div class="problem-statement">
+        <strong>⚠️ Did you know?</strong> Improperly disposed hardware is a leading cause of corporate data breaches. 
+    </div>
 
-    <div class="highlights">
-        <div class="highlight-item">
-            <i class="fas fa-check-circle"></i>
-            <p>FEES PAID<br>BY PROSAR</p>
+    <p>Join <strong>TechVidya Foundation</strong> and <strong>ProSAR EcoTech</strong> for a high-impact session designed specifically for IT professionals.</p>
+
+    <div class="feature-grid">
+        <div class="feature-box">
+            <i class="fas fa-file-invoice"></i>
+            <h4>NGO Participation Certificate</h4>
         </div>
-        <div class="highlight-item">
-            <i class="fas fa-certificate"></i>
-            <p>NGO CERTIFICATE<br>PROVIDED</p>
+        <div class="feature-box">
+            <i class="fas fa-rupee-sign"></i>
+            <h4>Corporate Sponsored (Free)</h4>
+        </div>
+        <div class="feature-box">
+            <i class="fas fa-lock"></i>
+            <h4>Data Security Best Practices</h4>
+        </div>
+        <div class="feature-box">
+            <i class="fas fa-language"></i>
+            <h4>Engaging Hindi Storytelling</h4>
         </div>
     </div>
 
-    <h3>📅 Workshop Details</h3>
-    <ul class="details-list">
-        <li><i class="fas fa-calendar-day"></i> 16th April</li>
-        <li><i class="fas fa-clock"></i> 4:00 PM (40 Mins)</li>
-        <li><i class="fas fa-language"></i> Hindi Storytelling</li>
-    </ul>
+    <div class="event-details">
+        <div class="detail-row"><i class="fas fa-calendar-check"></i> 16th April, 2026</div>
+        <div class="detail-row"><i class="fas fa-clock"></i> 4:00 PM (40-min Online Session)</div>
+        <div class="detail-row"><i class="fas fa-laptop-house"></i> Link shared upon registration</div>
+    </div>
 
-    <p class="tagline">"A small step from you can make a big environmental impact!"</p>
-
-    <div class="partner-logo">
-        Organized by <strong>TechVidya Foundation</strong> <br>
-        in association with <strong>ProSAR EcoTech Pvt. Ltd.</strong>
+    <div class="branding">
+        <p>A "Greener India" Initiative by</p>
+        <p><strong>TechVidya Foundation | ProSAR EcoTech Pvt. Ltd.</strong></p>
     </div>
 </div>
 
-<div class="cta-container">
-    <a href="https://forms.gle/g2sR3BSbkwFLqC22A" class="btn">Register Now – Free</a>
+<div class="sticky-cta">
+    <a href="https://forms.gle/g2sR3BSbkwFLqC22A" class="btn-primary">Reserve My Spot Now</a>
+    <p style="font-size: 0.7rem; color: #777; margin-top: 8px;">Limited slots available for IT professionals</p>
 </div>
+
+<script>
+    // Simple Countdown Logic
+    const targetDate = new Date("April 16, 2026 16:00:00").getTime();
+    
+    setInterval(function() {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+        
+        document.getElementById("days").innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
+        document.getElementById("hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        document.getElementById("mins").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    }, 1000);
+</script>
 
 </body>
 </html>
