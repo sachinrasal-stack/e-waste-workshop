@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Waste Awareness Workshop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2d6a4f; /* Eco Green */
+            --secondary: #1b4332;
+            --accent: #ff9f1c; /* Sales Orange */
+            --light: #f8f9fa;
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--light); color: #333; line-height: 1.6; }
+
+        /* Header Section */
+        header {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=1000');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .badge {
+            background: var(--accent);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        h1 { font-size: 2.2rem; margin-bottom: 10px; }
+
+        /* Content Container */
+        .container { max-width: 500px; margin: -30px auto 100px; background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+
+        .highlights { display: flex; justify-content: space-between; margin: 25px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 15px 0; }
+        .highlight-item { text-align: center; flex: 1; }
+        .highlight-item i { color: var(--primary); font-size: 1.5rem; margin-bottom: 5px; }
+        .highlight-item p { font-size: 0.8rem; font-weight: bold; }
+
+        .details-list { list-style: none; margin: 20px 0; }
+        .details-list li { margin-bottom: 15px; display: flex; align-items: center; font-size: 1.1rem; }
+        .details-list i { color: var(--primary); width: 30px; }
+
+        .tagline { font-style: italic; color: #666; text-align: center; margin: 20px 0; }
+
+        /* The Sticky CTA Button */
+        .cta-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 159, 28, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .btn:active { transform: scale(0.95); }
+
+        .partner-logo { font-size: 0.8rem; color: #888; text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="badge">FREE FOR PROFESSIONALS</div>
+    <h1>E-Waste Awareness Workshop</h1>
+    <p>Empowering IT Professionals for a Greener Tomorrow</p>
+</header>
+
+<div class="container">
+    <p>As IT professionals, legal e-waste disposal is not just an option — it is our responsibility towards our company, environment, and data security.</p>
+
+    <div class="highlights">
+        <div class="highlight-item">
+            <i class="fas fa-check-circle"></i>
+            <p>FEES PAID<br>BY PROSAR</p>
+        </div>
+        <div class="highlight-item">
+            <i class="fas fa-certificate"></i>
+            <p>NGO CERTIFICATE<br>PROVIDED</p>
+        </div>
+    </div>
+
+    <h3>📅 Workshop Details</h3>
+    <ul class="details-list">
+        <li><i class="fas fa-calendar-day"></i> 16th April</li>
+        <li><i class="fas fa-clock"></i> 4:00 PM (40 Mins)</li>
+        <li><i class="fas fa-language"></i> Hindi Storytelling</li>
+    </ul>
+
+    <p class="tagline">"A small step from you can make a big environmental impact!"</p>
+
+    <div class="partner-logo">
+        Organized by <strong>TechVidya Foundation</strong> <br>
+        in association with <strong>ProSAR EcoTech Pvt. Ltd.</strong>
+    </div>
+</div>
+
+<div class="cta-container">
+    <a href="https://forms.gle/g2sR3BSbkwFLqC22A" class="btn">Register Now – Free</a>
+</div>
+
+</body>
+</html>
