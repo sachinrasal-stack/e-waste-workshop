@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Waste Awareness Workshop | TechVidya Foundation</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --ink: #0f1714;
+    --parchment: #f5f0e8;
+    --leaf: #1a6b3a;
+    --leaf-light: #d4ead9;
+    --ember: #c0392b;
+    --ember-light: #fde8e6;
+    --gold: #b8860b;
+    --gold-light: #fef3cd;
+    --mist: #e8ede9;
+    --poison: #5c3317;
+    --type-serif: 'Playfair Display', Georgia, serif;
+    --type-sans: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--type-sans); background: var(--parchment); color: var(--ink); overflow-x: hidden; min-height: 100vh; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='0.8' fill='%23b0a888' opacity='0.35'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+  .page { position: relative; z-index: 1; }
+
+  .hero { background: var(--ink); color: var(--parchment); padding: 52px 24px 60px; text-align: center; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 40px; background: var(--parchment); clip-path: ellipse(55% 100% at 50% 100%); }
+  .workshop-label { display: inline-block; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #7dd8a0; border: 1px solid rgba(125,216,160,0.35); padding: 6px 18px; border-radius: 4px; margin-bottom: 10px; font-weight: 500; }
+  .pill-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(26,107,58,0.22); border: 1px solid rgba(26,107,58,0.5); color: #7dd8a0; font-size: 11px; font-weight: 500; letter-spacing: 1.2px; text-transform: uppercase; padding: 6px 16px; border-radius: 100px; margin-bottom: 18px; }
+  .pill-badge span { width: 6px; height: 6px; background: #7dd8a0; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .hero h1 { font-family: var(--type-serif); font-size: clamp(1.9rem, 5.5vw, 3rem); line-height: 1.18; margin-bottom: 16px; max-width: 560px; margin-left: auto; margin-right: auto; }
+  .hero h1 em { font-style: italic; color: #7dd8a0; }
+  .hero-sub { font-size: 0.97rem; font-weight: 300; color: #c8ccc5; max-width: 400px; margin: 0 auto 28px; line-height: 1.75; }
+  .hero-meta { display: inline-flex; gap: 24px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.11); padding: 13px 26px; border-radius: 12px; margin-bottom: 36px; }
+  .hero-meta .m { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .hero-meta .m strong { font-size: 1.05rem; font-weight: 500; color: #fff; }
+  .hero-meta .m small { font-size: 10px; color: #8a8f88; letter-spacing: 1px; text-transform: uppercase; }
+  .divider-line { width: 1px; background: rgba(255,255,255,0.12); align-self: stretch; margin: 0 4px; }
+
+  .cta-wrap { padding: 0 24px 36px; max-width: 420px; margin: 0 auto; }
+  .btn-main { display: block; background: var(--leaf); color: #fff; text-decoration: none; text-align: center; padding: 18px 32px; border-radius: 50px; font-size: 1.02rem; font-weight: 500; box-shadow: 0 4px 24px rgba(26,107,58,0.35); transition: transform 0.18s, box-shadow 0.18s; }
+  .btn-main:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(26,107,58,0.45); }
+  .btn-main:active { transform: scale(0.98); }
+  .btn-register { display: block; margin-top: 12px; background: transparent; color: var(--leaf); text-decoration: none; text-align: center; padding: 15px 32px; border-radius: 50px; font-size: 0.97rem; font-weight: 500; border: 2px solid var(--leaf); transition: background 0.18s, color 0.18s, transform 0.18s; }
+  .btn-register:hover { background: var(--leaf); color: #fff; transform: translateY(-2px); }
+  .btn-register:active { transform: scale(0.98); }
+  .btn-note { text-align: center; font-size: 12px; color: #7a7a6e; margin-top: 10px; }
+
+  .content { padding: 4px 20px 100px; max-width: 640px; margin: 0 auto; }
+  .section-eyebrow { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--leaf); font-weight: 500; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .section-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--leaf-light); }
+
+  .toxic-banner { background: #1c0f0a; border-radius: 18px; padding: 28px 24px; margin-bottom: 20px; position: relative; overflow: hidden; }
+  .toxic-banner::before { content: '☠'; position: absolute; right: 16px; top: 10px; font-size: 80px; opacity: 0.06; line-height: 1; pointer-events: none; }
+  .toxic-banner .tb-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #e8855a; margin-bottom: 10px; font-weight: 500; }
+  .toxic-banner h2 { font-family: var(--type-serif); font-size: 1.45rem; color: #fff; line-height: 1.3; margin-bottom: 12px; }
+  .toxic-banner p { font-size: 0.88rem; color: #c0bdb8; line-height: 1.75; font-weight: 300; margin-bottom: 18px; }
+  .toxin-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .toxin-pill { background: rgba(255,255,255,0.07); border: 1px solid rgba(232,133,90,0.35); color: #e8855a; font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 100px; }
+
+  .harm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .harm-card { border-radius: 14px; padding: 20px 16px; border: 1px solid transparent; }
+  .harm-card.h1 { background: #fef3cd; border-color: rgba(184,134,11,0.2); }
+  .harm-card.h2 { background: #fde8e6; border-color: rgba(192,57,43,0.2); }
+  .harm-card.h3 { background: #f5ede6; border-color: rgba(92,51,23,0.2); }
+  .harm-card.h4 { background: #e8f5f0; border-color: rgba(26,107,58,0.2); }
+  .harm-card i { font-size: 17px; margin-bottom: 9px; display: block; }
+  .harm-card.h1 i { color: var(--gold); }
+  .harm-card.h2 i { color: var(--ember); }
+  .harm-card.h3 i { color: var(--poison); }
+  .harm-card.h4 i { color: var(--leaf); }
+  .harm-card h4 { font-size: 0.87rem; font-weight: 500; color: var(--ink); margin-bottom: 5px; }
+  .harm-card p { font-size: 0.76rem; color: #5a5a50; line-height: 1.55; }
+
+  .story-card { background: var(--ink); color: var(--parchment); border-radius: 20px; padding: 30px 26px; margin-bottom: 20px; position: relative; overflow: hidden; }
+  .story-card::before { content: '"'; position: absolute; top: -10px; right: 18px; font-family: var(--type-serif); font-size: 110px; color: rgba(255,255,255,0.05); line-height: 1; pointer-events: none; }
+  .story-card .chapter { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #7dd8a0; margin-bottom: 12px; }
+  .story-card h2 { font-family: var(--type-serif); font-size: 1.5rem; line-height: 1.3; margin-bottom: 12px; color: #fff; }
+  .story-card p { font-size: 0.9rem; color: #c8ccc5; line-height: 1.78; font-weight: 300; }
+
+  .audience-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .aud-card { background: #fff; border: 1px solid #e4e1d8; border-radius: 14px; padding: 18px 12px; text-align: center; }
+  .aud-card .icon { width: 38px; height: 38px; border-radius: 50%; background: var(--leaf-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 9px; font-size: 15px; color: var(--leaf); }
+  .aud-card h5 { font-size: 0.78rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .aud-card p { font-size: 0.7rem; color: #7a7a6e; line-height: 1.4; }
+
+  .journey-card { background: #fff; border: 1px solid #e4e1d8; border-radius: 18px; padding: 22px 18px; margin-bottom: 20px; }
+  .timeline { display: flex; flex-direction: column; }
+  .tl-step { display: grid; grid-template-columns: 32px 1fr; gap: 0 14px; position: relative; }
+  .tl-step:not(:last-child) .tl-dot::after { content: ''; position: absolute; left: 15px; top: 32px; bottom: -4px; width: 1px; background: #e0ddd6; }
+  .tl-dot { position: relative; display: flex; align-items: flex-start; padding-top: 3px; }
+  .dot-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; z-index: 1; position: relative; }
+  .dot-circle.d1 { background: var(--leaf-light); color: var(--leaf); }
+  .dot-circle.d2 { background: var(--gold-light); color: var(--gold); }
+  .dot-circle.d3 { background: var(--ember-light); color: var(--ember); }
+  .dot-circle.d4 { background: #fde8e6; color: var(--poison); }
+  .dot-circle.d5 { background: var(--leaf-light); color: var(--leaf); }
+  .tl-content { padding: 4px 0 24px; }
+  .tl-content h5 { font-size: 0.88rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .tl-content p { font-size: 0.78rem; color: #7a7a6e; line-height: 1.55; }
+
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .info-card { border-radius: 14px; padding: 20px 16px; border: 1px solid transparent; }
+  .info-card.law { background: var(--ember-light); border-color: rgba(192,57,43,0.2); }
+  .info-card.earth { background: var(--leaf-light); border-color: rgba(26,107,58,0.2); }
+  .info-card.policy { background: var(--gold-light); border-color: rgba(184,134,11,0.2); }
+  .info-card.action { background: var(--mist); border-color: #d4dbd5; }
+  .info-card .ic-icon { font-size: 17px; margin-bottom: 9px; display: block; }
+  .info-card.law .ic-icon { color: var(--ember); }
+  .info-card.earth .ic-icon { color: var(--leaf); }
+  .info-card.policy .ic-icon { color: var(--gold); }
+  .info-card.action .ic-icon { color: #4a6b52; }
+  .info-card h4 { font-size: 0.87rem; font-weight: 500; color: var(--ink); margin-bottom: 5px; }
+  .info-card p { font-size: 0.76rem; color: #5a5a50; line-height: 1.55; }
+
+  .alert-banner { background: var(--ember); color: #fff; border-radius: 14px; padding: 20px 18px; margin-bottom: 20px; display: flex; gap: 13px; align-items: flex-start; }
+  .alert-banner i { font-size: 19px; flex-shrink: 0; margin-top: 2px; }
+  .alert-banner h4 { font-size: 0.93rem; font-weight: 500; margin-bottom: 5px; }
+  .alert-banner p { font-size: 0.78rem; line-height: 1.6; opacity: 0.9; }
+
+  .org-footer { background: var(--mist); border-radius: 16px; padding: 20px; text-align: center; border: 1px solid #d4dbd5; }
+  .org-footer .org-by { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #8a8f88; margin-bottom: 7px; }
+  .org-footer .org-names { font-size: 0.87rem; color: var(--ink); font-weight: 500; }
+  .org-footer .org-perks { display: flex; justify-content: center; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
+  .perk { display: flex; align-items: center; gap: 5px; font-size: 0.73rem; color: #5a5a50; }
+  .perk i { color: var(--leaf); font-size: 11px; }
+  .org-footer .helpline { margin-top: 12px; font-size: 0.78rem; color: #7a7a6e; }
+  .org-footer .helpline strong { color: var(--ink); }
+  .footer-reg-btn { display: block; margin-top: 16px; background: var(--ink); color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 50px; font-size: 0.92rem; font-weight: 500; transition: background 0.18s, transform 0.18s; }
+  .footer-reg-btn:hover { background: #243b2f; transform: translateY(-2px); }
+  .footer-reg-btn:active { transform: scale(0.98); }
+
+  @media (max-width: 480px) {
+    .harm-grid { grid-template-columns: 1fr; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="workshop-label">E-Waste Awareness Workshop</div>
+    <div class="pill-badge"><span></span> A Greener India Initiative</div>
+    <h1>One Discarded Phone.<br><em>A Story That Will Change You.</em></h1>
+    <p class="hero-sub">A free online session — told as a gripping story — about what really happens to your old electronics, who it harms, and why the law demands you act.</p>
+    <div class="hero-meta">
+      <div class="m"><strong>16 Apr</strong><small>Date</small></div>
+      <div class="divider-line"></div>
+      <div class="m"><strong>4:00 PM</strong><small>Time</small></div>
+      <div class="divider-line"></div>
+      <div class="m"><strong>40 Min</strong><small>Online</small></div>
+    </div>
+  </div>
+
+  <div class="cta-wrap">
+    <a href="https://forms.gle/g2sR3BSbkwFLqC22A" target="_blank" class="btn-main">
+      <i class="fas fa-play-circle" style="margin-right:8px;"></i> Come Hear the Story — Free
+    </a>
+    <a href="https://forms.gle/g2sR3BSbkwFLqC22A" target="_blank" class="btn-register">
+      <i class="fas fa-user-plus" style="margin-right:8px;"></i> Register Now
+    </a>
+    <p class="btn-note">NGO attendance certificate provided to all participants</p>
+  </div>
+
+  <div class="content">
+
+    <div class="section-eyebrow">The Toxic Truth</div>
+    <div class="toxic-banner">
+      <div class="tb-label">What's hiding inside your old device</div>
+      <h2>Your phone is a cocktail of poisons. Disposed wrongly, it kills.</h2>
+      <p>A single smartphone contains over 60 chemical elements — many of them deadly. When burned in the open or dissolved in acid baths by informal recyclers, these toxins are released into the air we breathe, the water we drink, and the soil that grows our food. This is not a distant problem. It is happening in Indian cities right now.</p>
+      <div class="toxin-pills">
+        <span class="toxin-pill">Lead — brain damage</span>
+        <span class="toxin-pill">Mercury — nerve damage</span>
+        <span class="toxin-pill">Cadmium — kidney failure</span>
+        <span class="toxin-pill">Arsenic — cancer risk</span>
+        <span class="toxin-pill">Beryllium — lung disease</span>
+        <span class="toxin-pill">Chromium VI — DNA damage</span>
+        <span class="toxin-pill">BFRs — hormonal disruption</span>
+      </div>
+    </div>
+
+    <div class="section-eyebrow">Who Gets Harmed</div>
+    <div class="harm-grid">
+      <div class="harm-card h1">
+        <i class="fas fa-child"></i>
+        <h4>Children</h4>
+        <p>Lead and mercury accumulate in growing bodies, causing irreversible neurological and developmental damage.</p>
+      </div>
+      <div class="harm-card h2">
+        <i class="fas fa-tint"></i>
+        <h4>Water Sources</h4>
+        <p>Heavy metals leach into groundwater near dump sites, contaminating drinking water for entire communities.</p>
+      </div>
+      <div class="harm-card h3">
+        <i class="fas fa-seedling"></i>
+        <h4>Soil & Crops</h4>
+        <p>Toxic residues poison farmland for decades. Cadmium absorbed by plants enters the food chain silently.</p>
+      </div>
+      <div class="harm-card h4">
+        <i class="fas fa-wind"></i>
+        <h4>Air We Breathe</h4>
+        <p>Open burning of circuit boards releases dioxins and furans — among the most dangerous airborne carcinogens known.</p>
+      </div>
+    </div>
+
+    <div class="section-eyebrow">The Format</div>
+    <div class="story-card">
+      <div class="chapter">Chapter One — The Journey Begins</div>
+      <h2>Forget presentations.<br>We're telling a story.</h2>
+      <p>A phone is bought. It is loved. Then forgotten in a drawer. Then handed to a roadside vendor for ₹200. What happens next is a story of poisoned rivers, sick children, broken laws, and a nation at a crossroads. Come find out how <em style="color:#7dd8a0;">your</em> device is part of this story — and how you can change its ending.</p>
+    </div>
+
+    <div class="section-eyebrow">Who Should Attend</div>
+    <div class="audience-strip">
+      <div class="aud-card">
+        <div class="icon"><i class="fas fa-home"></i></div>
+        <h5>Home Users</h5>
+        <p>Old phones, TVs, chargers in your drawers</p>
+      </div>
+      <div class="aud-card">
+        <div class="icon"><i class="fas fa-laptop"></i></div>
+        <h5>IT Teams</h5>
+        <p>Retiring bulk devices, servers, laptops</p>
+      </div>
+      <div class="aud-card">
+        <div class="icon"><i class="fas fa-building"></i></div>
+        <h5>Corporates</h5>
+        <p>EPR compliance, ESG obligations</p>
+      </div>
+    </div>
+
+    <div class="section-eyebrow">The Story Arc</div>
+    <div class="journey-card">
+      <div class="timeline">
+        <div class="tl-step">
+          <div class="tl-dot"><div class="dot-circle d1"><i class="fas fa-mobile-alt"></i></div></div>
+          <div class="tl-content"><h5>The Device Is Born</h5><p>Bought, loved, used daily. Inside: copper, gold, cobalt — and 60+ toxic chemicals waiting to be released.</p></div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-dot"><div class="dot-circle d2"><i class="fas fa-store"></i></div></div>
+          <div class="tl-content"><h5>The Drawer. The Vendor. The Mistake.</h5><p>Millions of devices reach unregistered recyclers. Your data unwiped. Your toxins uncontrolled. The chain begins.</p></div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-dot"><div class="dot-circle d3"><i class="fas fa-fire"></i></div></div>
+          <div class="tl-content"><h5>Open Burning. Acid Baths. Real Damage.</h5><p>Circuit boards burned in the open. Children sorting hazardous waste barefoot. Toxic smoke over neighbourhoods.</p></div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-dot"><div class="dot-circle d4"><i class="fas fa-skull-crossbones"></i></div></div>
+          <div class="tl-content"><h5>The Silent Victims</h5><p>Lead in a child's blood. Mercury in a river. Cadmium in a farmer's soil. The cost no invoice ever shows.</p></div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-dot"><div class="dot-circle d5"><i class="fas fa-recycle"></i></div></div>
+          <div class="tl-content"><h5>The Better Ending</h5><p>Legal channels. Certified recyclers. EPR compliance. Materials recovered, not dumped. You can choose this ending.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-eyebrow">What You Will Learn</div>
+    <div class="info-grid">
+      <div class="info-card law">
+        <i class="fas fa-gavel ic-icon"></i>
+        <h4>The Law & Penalties</h4>
+        <p>E-Waste Rules 2022, EPR mandates, EPA 1986, CPCB directives — and the steep fines for non-compliance.</p>
+      </div>
+      <div class="info-card earth">
+        <i class="fas fa-leaf ic-icon"></i>
+        <h4>Environmental Impact</h4>
+        <p>How toxins travel from your device into soil, water, and air — and who pays the price with their health.</p>
+      </div>
+      <div class="info-card policy">
+        <i class="fas fa-file-alt ic-icon"></i>
+        <h4>Government Policies</h4>
+        <p>What producers, bulk consumers, and individuals are legally required to do under current Indian law.</p>
+      </div>
+      <div class="info-card action">
+        <i class="fas fa-hands-helping ic-icon"></i>
+        <h4>What You Can Do</h4>
+        <p>Simple, legal, practical steps for homes and businesses to dispose of e-waste responsibly — starting today.</p>
+      </div>
+    </div>
+
+    <div class="alert-banner">
+      <i class="fas fa-exclamation-circle"></i>
+      <div>
+        <h4>Ignorance is not a legal defence.</h4>
+        <p>Under E-Waste (Management) Rules 2022 and the Environment Protection Act 1986, improper disposal can attract financial penalties and prosecution — for individuals and corporates alike. This workshop tells you exactly what applies to you.</p>
+      </div>
+    </div>
+
+    <div class="org-footer">
+      <p class="org-by">Organised by</p>
+      <p class="org-names">TechVidya Foundation &amp; ProSAR EcoTech Pvt. Ltd.</p>
+      <div class="org-perks">
+        <span class="perk"><i class="fas fa-check-circle"></i> Free to attend</span>
+        <span class="perk"><i class="fas fa-check-circle"></i> Hindi storytelling format</span>
+        <span class="perk"><i class="fas fa-check-circle"></i> NGO certificate</span>
+        <span class="perk"><i class="fas fa-check-circle"></i> Live Q&amp;A</span>
+      </div>
+      <p class="helpline">Helpline: <strong>+91 844 669 1000</strong> &nbsp;|&nbsp; <strong>prosareco.com</strong></p>
+      <a href="https://forms.gle/g2sR3BSbkwFLqC22A" target="_blank" class="footer-reg-btn">
+        <i class="fas fa-user-plus" style="margin-right:8px;"></i> Register for the Workshop
+      </a>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
