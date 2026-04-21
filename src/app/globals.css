@@ -1,0 +1,311 @@
+:root {
+  --primary-color: #2e7d32;
+  --primary-hover: #1b5e20;
+  --background: #f4f9f4;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --input-bg: #f8fafc;
+  --border-color: #cbd5e1;
+  --success: #10b981;
+  --radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background: var(--background);
+  background-image: radial-gradient(at 0% 0%, hsla(140,40%,90%,1) 0px, transparent 50%),
+                    radial-gradient(at 100% 0%, hsla(210,40%,90%,1) 0px, transparent 50%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Typography */
+h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.text-center { text-align: center; }
+.mt-1 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+
+/* Layouts */
+.container {
+  width: 100%;
+  max-width: 600px; /* Mobile first, works on desktop neatly */
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Cards & Containers */
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  margin-bottom: 1.5rem;
+  border-top: 5px solid var(--primary-color);
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 0.8rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: var(--text-secondary);
+}
+
+.form-control {
+  padding: 0.65rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: #fdfdfd;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  outline: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.01) inset;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+  background: #fff;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.25);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Badges & Statistics */
+.stats-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+}
+
+.stat-card {
+  flex: 1;
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.9));
+  border: 1px solid rgba(46, 125, 50, 0.15);
+  border-radius: 12px;
+  padding: 1.2rem 0.5rem;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.stat-value {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #064e3b;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #475569;
+  text-transform: uppercase;
+  margin-top: 0.4rem;
+  letter-spacing: 0.5px;
+}
+
+/* Workshop Highlights */
+.highlight-list {
+  list-style: none;
+  margin-bottom: 1.5rem;
+}
+
+.highlight-list li {
+  position: relative;
+  padding-left: 28px;
+  margin-bottom: 0.8rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.highlight-list li::before {
+  content: '✅';
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 1.1rem;
+}
+
+.workshop-details {
+  background: #f8fafc;
+  border-left: 4px solid var(--primary-color);
+  padding: 1rem;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin-bottom: 1.5rem;
+}
+
+.workshop-details p {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+.workshop-details p:last-child {
+  margin-bottom: 0;
+}
+
+.loader {
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Admin Dashboard Tables */
+.table-responsive {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+th {
+  background: var(--input-bg);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Navigation */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.nav a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+.nav a:hover {
+  text-decoration: underline;
+}
+
+/* Enhancements */
+.hero-title-container {
+  background: linear-gradient(135deg, rgba(46, 125, 50, 0.05), rgba(5, 150, 105, 0.1));
+  border-radius: 12px;
+  padding: 1.5rem 0.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(46, 125, 50, 0.1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02) inset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.title-gradient {
+  background: -webkit-linear-gradient(45deg, #1b5e20, #059669);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+  font-size: min(6vw, 1.8rem);
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+  margin-bottom: 0;
+  text-transform: none;
+}
+
+.subtitle-strong {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+}

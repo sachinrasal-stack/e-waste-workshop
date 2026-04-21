@@ -1,0 +1,51 @@
+import { supabase } from './supabase';
+
+const defaultSettings = {
+  date: '16th April',
+  time: '4:00 PM',
+  link: 'https://forms.gle/g2sR3BSbkwFLqC22A'
+};
+
+export async function getData() {
+  const [settingsRes, regRes] = await Promise.all([
+    supabase.from('settings').select('*').eq('id', 1).single(),
+    supabase.from('registrations').select('*').order('created_at', { ascending: false })
+  ]);
+  
+  const formattedRegistrations = (regRes.data || []).map(r => ({
+    id: r.id,
+    fullName: r.full_name,
+    organization: r.organization,
+    city: r.city,
+    whatsapp: r.whatsapp,
+    email: r.email,
+    createdAt: r.created_at
+  }));
+
+  // Clean settings data without ID for frontend compatibility
+  const settingsData = settingsRes.data 
+    ? { date: settingsRes.data.date, time: settingsRes.data.time, link: settingsRes.data.link } 
+    : defaultSettings;
+
+  return {
+    settings: settingsData,
+    registrations: formattedRegistrations
+  };
+}
+
+export async function addRegistration(user) {
+  const dbUser = {
+    full_name: user.fullName,
+    organization: user.organization,
+    city: user.city,
+    whatsapp: user.whatsapp,
+    email: user.email
+  };
+  const { error } = await supabase.from('registrations').insert([dbUser]);
+  if (error) throw error;
+}
+
+export async function updateSettings(settings) {
+  const { error } = await supabase.from('settings').upsert({ id: 1, ...settings });
+  if (error) throw error;
+}
