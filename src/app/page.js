@@ -111,7 +111,7 @@ export default function Home() {
           <p><strong>Duration:</strong> 45 minutes</p>
           <div style={{ marginTop: '1.2rem', padding: '1rem', background: '#fff', borderRadius: '8px', borderLeft: '4px solid #f59e0b', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
             <p style={{ fontWeight: 800, color: '#b45309', marginBottom: '0.8rem', fontSize: '1.05rem' }}>
-              No Technical Gyaan… Just a Real Hindi Story 😊
+              No Technical Gyaan...Just a real story like a movie...
             </p>
             <p style={{ fontWeight: 700, marginBottom: '0.5rem', color: '#1e293b' }}>The story of Phunsukh Wangdu</p>
             <p style={{ marginBottom: '0.2rem' }}>🚔 Arrested by the police</p>
@@ -125,7 +125,7 @@ export default function Home() {
 
         <div style={{ justifyContent: 'center', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ textAlign: 'center' }}>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: '900', color: '#16a34a', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <h2 className="flash-attention" style={{ fontSize: '1.6rem', fontWeight: '900', color: '#16a34a', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
               It's absolutely FREE
             </h2>
             <p style={{ fontWeight: '700', color: '#059669', fontSize: '1rem', margin: 0 }}>
@@ -154,7 +154,7 @@ export default function Home() {
       <div className="card" id="register">
         {submitState === 'success' ? (
            <div style={{ background: '#ecfdf5', color: '#065f46', padding: '1.5rem 1rem', borderRadius: '8px', textAlign: 'center' }}>
-            <h2 className="flash-success" style={{ color: '#047857', marginBottom: '1.5rem', whiteSpace: 'nowrap', fontSize: 'clamp(1rem, 6.5vw, 1.5rem)' }}>🎉 Registration Successful!</h2>
+            <h2 className="flash-success" style={{ color: '#047857', marginBottom: '1.5rem', whiteSpace: 'nowrap', fontSize: 'clamp(1rem, 6.5vw, 1.5rem)' }}>Registration Successful!</h2>
             <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
               <p>Thank you for taking a responsible step towards sustainable e-waste management.</p>
               <p>You are now part of a growing community of aware and compliant citizens who care about the environment and legal responsibility.</p>
@@ -179,7 +179,7 @@ export default function Home() {
           </div>
         ) : (
           <>
-            <h2 className="text-center" style={{ marginBottom: '0.5rem' }}>Register Now</h2>
+            <h2 className="text-center flash-attention" style={{ marginBottom: '0.5rem' }}>Register Now</h2>
             <p style={{ fontSize: '0.95rem', textAlign: 'left', color: '#475569', marginBottom: '1.5rem' }}>🌱 A small step from you can make a big environmental impact!</p>
             <form onSubmit={handleSubmit}>
             <div className="form-group">

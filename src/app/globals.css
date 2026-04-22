@@ -318,3 +318,12 @@ th {
 .flash-success {
   animation: flashText 1s ease-in-out 5;
 }
+
+@keyframes flashAttention {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.1; }
+}
+
+.flash-attention {
+  animation: flashAttention 1s ease-in-out 5;
+}
