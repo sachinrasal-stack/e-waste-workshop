@@ -88,8 +88,9 @@ export default function Home() {
 
       <div className="card">
         <div className="hero-title-container">
-          <h1 className="title-gradient text-center">
-            <span style={{ display: 'block', fontSize: '1.1em', marginBottom: '0.4rem', color: '#14532d', whiteSpace: 'nowrap' }}>Electronic Waste (e-waste)</span>
+          <h1 className="title-gradient text-center" style={{ border: '2px solid #16a34a', padding: '1.2rem', borderRadius: '12px', background: 'rgba(255,255,255,0.5)' }}>
+            <span style={{ display: 'block', fontSize: '1.1em', marginBottom: '0.2rem', color: '#14532d' }}>Electronic Waste</span>
+            <span style={{ display: 'block', fontSize: '1.1em', marginBottom: '0.4rem', color: '#14532d' }}>(E-waste)</span>
             <span style={{ display: 'block', fontSize: '0.9em' }}>Awareness Workshop</span>
           </h1>
         </div>
@@ -153,12 +154,14 @@ export default function Home() {
       <div className="card" id="register">
         {submitState === 'success' ? (
            <div style={{ background: '#ecfdf5', color: '#065f46', padding: '1.5rem 1rem', borderRadius: '8px', textAlign: 'center' }}>
-            <h2 style={{ color: '#047857', marginBottom: '1rem' }}>🎉 Registration Successful!</h2>
-            <p>Thank you for taking a responsible step towards sustainable e-waste management.</p>
-            <p>You are now part of a growing community of aware and compliant IT professionals who care about the environment and legal responsibility.</p>
-            <p>📩 Workshop details and joining instructions will be shared with you shortly.</p>
-            <p>📜 Your NGO participation certificate will be issued after successful attendance.</p>
-            <p style={{ fontWeight: 600, marginTop: '1rem' }}>Let’s work together to protect our planet — responsibly and legally.</p>
+            <h2 style={{ color: '#047857', marginBottom: '1.5rem', whiteSpace: 'nowrap' }}>🎉 Registration Successful!</h2>
+            <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+              <p>Thank you for taking a responsible step towards sustainable e-waste management.</p>
+              <p>You are now part of a growing community of aware and compliant IT professionals who care about the environment and legal responsibility.</p>
+              <p>📩 Workshop details and joining instructions will be shared with you shortly.</p>
+              <p>📜 Your NGO participation certificate will be issued after successful attendance.</p>
+              <p style={{ fontWeight: 600, marginTop: '0.5rem' }}>Let’s work together to protect our planet — responsibly and legally.</p>
+            </div>
             
             <div style={{ borderTop: '2px solid #a7f3d0', margin: '1.5rem 0', paddingTop: '1.5rem' }}>
               <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: '#065f46' }}>Become an E-Waste Warrior of Your City</h3>
