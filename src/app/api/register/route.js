@@ -24,6 +24,6 @@ export async function POST(request) {
     if (error.code === '23505') { // Postgres Unique Constraint Error Code
        return NextResponse.json({ success: false, message: 'Email is already registered' }, { status: 400 });
     }
-    return NextResponse.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ success: false, message: `Internal Server Error: ${error.message || 'Unknown'} (Code: ${error.code || 'None'})` }, { status: 500 });
   }
 }

@@ -89,7 +89,7 @@ export default function Home() {
       <div className="card">
         <div className="hero-title-container">
           <h1 className="title-gradient text-center">
-            <span style={{ display: 'block', fontSize: '1.1em', marginBottom: '0.4rem', color: '#14532d' }}>Electronic Waste (E-waste)</span>
+            <span style={{ display: 'block', fontSize: '1.1em', marginBottom: '0.4rem', color: '#14532d', whiteSpace: 'nowrap' }}>Electronic Waste (e-waste)</span>
             <span style={{ display: 'block', fontSize: '0.9em' }}>Awareness Workshop</span>
           </h1>
         </div>
