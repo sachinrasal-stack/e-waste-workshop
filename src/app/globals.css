@@ -309,3 +309,12 @@ th {
   margin-bottom: 0.8rem;
   line-height: 1.4;
 }
+
+@keyframes flashText {
+  0%, 100% { opacity: 1; color: #047857; }
+  50% { opacity: 0.3; color: #10b981; }
+}
+
+.flash-success {
+  animation: flashText 1s ease-in-out 5;
+}
