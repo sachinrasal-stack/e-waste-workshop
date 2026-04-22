@@ -49,9 +49,12 @@ export default function AdminDashboard() {
         setSaveStatus('success');
         setTimeout(() => setSaveStatus('idle'), 3000);
       } else {
+        const errorData = await res.json();
+        alert(`Error: ${errorData.message || 'Failed to update settings'}`);
         setSaveStatus('error');
       }
     } catch (err) {
+      alert(`Network Error: ${err.message}`);
       setSaveStatus('error');
     }
   };

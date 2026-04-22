@@ -46,6 +46,9 @@ export async function addRegistration(user) {
 }
 
 export async function updateSettings(settings) {
-  const { error } = await supabase.from('settings').upsert({ id: 1, ...settings });
+  const { data, error } = await supabase.from('settings').upsert({ id: 1, ...settings }).select();
   if (error) throw error;
+  if (!data || data.length === 0) {
+    throw new Error('Database Update Failed: Record was blocked by Supabase Row-Level Security (RLS). Please check your Supabase Table RLS Policies.');
+  }
 }
