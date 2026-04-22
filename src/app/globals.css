@@ -325,5 +325,5 @@ th {
 }
 
 .flash-attention {
-  animation: flashAttention 1s ease-in-out 5;
+  animation: flashAttention 2.5s ease-in-out infinite;
 }
