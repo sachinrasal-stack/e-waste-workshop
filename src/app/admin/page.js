@@ -16,8 +16,8 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     try {
       const [settingsRes, regRes] = await Promise.all([
-        fetch('/api/settings'),
-        fetch('/api/register')
+        fetch('/api/settings', { cache: 'no-store' }),
+        fetch('/api/register', { cache: 'no-store' })
       ]);
       
       const settingsData = await settingsRes.json();

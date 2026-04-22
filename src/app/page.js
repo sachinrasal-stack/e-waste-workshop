@@ -23,11 +23,11 @@ export default function Home() {
 
   const fetchData = async () => {
     try {
-      const settingsRes = await fetch('/api/settings');
+      const settingsRes = await fetch('/api/settings', { cache: 'no-store' });
       const settingsData = await settingsRes.json();
       setSettings(settingsData);
 
-      const regRes = await fetch('/api/register');
+      const regRes = await fetch('/api/register', { cache: 'no-store' });
       const regData = await regRes.json();
       setTotal(regData.total);
     } catch (err) {
