@@ -4,6 +4,16 @@ import nodemailer from 'nodemailer';
 
 export async function POST(request) {
   try {
+    let customSubject = '';
+    let customMessage = '';
+    try {
+      const body = await request.json();
+      customSubject = body.subject;
+      customMessage = body.message;
+    } catch (e) {
+      // ignore JSON parse error if body is empty
+    }
+
     const data = await getData();
     const registrations = data.registrations;
     const settings = data.settings;
@@ -29,30 +39,45 @@ export async function POST(request) {
     }
 
     const emailPromises = registrations.map(async (user) => {
-      const htmlContent = `
-        <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto;">
-          <h2 style="color: #2e7d32;">Hello ${user.fullName},</h2>
-          <p>Thank you for registering for the <strong>E-waste Awareness Workshop</strong>!</p>
-          
-          <div style="background-color: #f4f9f4; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 5px 0;"><strong>📅 Date:</strong> ${settings.date}</p>
-            <p style="margin: 5px 0;"><strong>🕓 Time:</strong> ${settings.time}</p>
-            <p style="margin: 5px 0;"><strong>🔗 Join Link:</strong> <a href="${settings.link}">${settings.link}</a></p>
+      let finalSubject = customSubject;
+      let finalHtmlContent = '';
+
+      if (customSubject && customMessage) {
+        // Use custom reminder message, convert \n to <br> and wrap in basic styling
+        const messageHtml = customMessage.replace(/\n/g, '<br/>');
+        finalHtmlContent = `
+          <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto;">
+            <div>${messageHtml}</div>
           </div>
-          
-          <p>Please join 5 minutes early so we can start exactly on time. We look forward to seeing you there!</p>
-          <br>
-          <p>Best Regards,</p>
-          <p><strong>Team ProSAR</strong></p>
-        </div>
-      `;
+        `;
+      } else {
+        // Fallback default format
+        finalSubject = "Your Workshop Details - E-waste Initiative";
+        finalHtmlContent = `
+          <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto;">
+            <h2 style="color: #2e7d32;">Hello ${user.fullName},</h2>
+            <p>Thank you for registering for the <strong>E-waste Awareness Workshop</strong>!</p>
+            
+            <div style="background-color: #f4f9f4; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 5px 0;"><strong>📅 Date:</strong> ${settings.date}</p>
+              <p style="margin: 5px 0;"><strong>🕓 Time:</strong> ${settings.time}</p>
+              <p style="margin: 5px 0;"><strong>🔗 Join Link:</strong> <a href="${settings.link}">${settings.link}</a></p>
+            </div>
+            
+            <p>Please join 5 minutes early so we can start exactly on time. We look forward to seeing you there!</p>
+            <br>
+            <p>Best Regards,</p>
+            <p><strong>Team ProSAR</strong></p>
+          </div>
+        `;
+      }
 
       try {
         await transporter.sendMail({
           from: process.env.EMAIL_FROM || '"E-waste Workshop" <noreply@ewasteworkshop.com>',
           to: user.email,
-          subject: "Your Workshop Details - E-waste Initiative",
-          html: htmlContent,
+          subject: finalSubject,
+          html: finalHtmlContent,
         });
       } catch (err) {
         console.error(`Failed to send email to ${user.email}`, err);

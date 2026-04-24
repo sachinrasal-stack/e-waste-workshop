@@ -8,6 +8,40 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState('idle');
   const [notifyStatus, setNotifyStatus] = useState('idle');
+  
+  const [selectedReminder, setSelectedReminder] = useState('1');
+  const [reminderSubject, setReminderSubject] = useState('');
+  const [reminderMessage, setReminderMessage] = useState('');
+
+  const getTemplate = (type, currentSettings) => {
+    switch (type) {
+      case '1':
+        return {
+          subject: 'Reminder 1: Upcoming E-waste Awareness Workshop',
+          message: `Dear Participant,\n\nThis is a first reminder regarding our upcoming E-waste Awareness Workshop.\n\nDate: ${currentSettings.date}\nTime: ${currentSettings.time}\nJoin Link: ${currentSettings.link}\n\nPlease keep the date blocked on your calendar.\n\nBest Regards,\nTeam ProSAR`
+        };
+      case '2':
+        return {
+          subject: 'Reminder 2: E-waste Workshop is Tomorrow!',
+          message: `Dear Participant,\n\nOur E-waste Awareness Workshop is just one day away. We are excited to see you!\n\nDate: ${currentSettings.date}\nTime: ${currentSettings.time}\nWait for us at: ${currentSettings.link}\n\nDon't forget to mark your calendars.\n\nBest Regards,\nTeam ProSAR`
+        };
+      case '3':
+        return {
+          subject: 'Reminder 3: We are LIVE! Join the E-waste Workshop Now',
+          message: `Dear Participant,\n\nThe E-waste Awareness Workshop is starting right now! Please click the link below to join us.\n\nJoin Link: ${currentSettings.link}\n\nSee you inside!\n\nBest Regards,\nTeam ProSAR`
+        };
+      default:
+        return { subject: '', message: '' };
+    }
+  };
+
+  useEffect(() => {
+    if (!loading) {
+      const template = getTemplate(selectedReminder, settings);
+      setReminderSubject(template.subject);
+      setReminderMessage(template.message);
+    }
+  }, [selectedReminder, loading]);
 
   useEffect(() => {
     fetchData();
@@ -60,11 +94,15 @@ export default function AdminDashboard() {
   };
 
   const sendEmails = async () => {
-    if (!confirm('Are you sure you want to trigger the Email Dispatch to all registered users? Please ensure your .env setup is complete!')) return;
+    if (!confirm('Are you sure you want to send this reminder to all registered users? Please ensure your .env setup is complete!')) return;
     
     setNotifyStatus('loading');
     try {
-      const res = await fetch('/api/notify', { method: 'POST' });
+      const res = await fetch('/api/notify', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject: reminderSubject, message: reminderMessage })
+      });
       const data = await res.json();
       if (data.success) {
         alert(data.message);
@@ -80,6 +118,17 @@ export default function AdminDashboard() {
     setTimeout(() => setNotifyStatus('idle'), 3000);
   };
 
+  const sendBulkWhatsApp = () => {
+    if (!confirm(`This will attempt to open ${registrations.length} new WhatsApp Web tabs sequentially. You MUST "Allow Popups" for this site in your browser for this to work.\n\nReady to open tabs?`)) return;
+    
+    registrations.forEach((reg, index) => {
+      // 800ms delay helps avoid overwhelming the browser
+      setTimeout(() => {
+        window.open(generateWhatsAppLink(reg), '_blank');
+      }, index * 800);
+    });
+  };
+
   const generateWhatsAppLink = (user) => {
     // Basic phone number sanitization (remove non-digits)
     let phone = user.whatsapp.replace(/\D/g, ''); 
@@ -88,7 +137,10 @@ export default function AdminDashboard() {
       phone = '91' + phone; 
     }
     
-    const message = `Hello ${user.fullName},%0A%0AThank you for registering for the *E-waste Awareness Workshop*!%0A%0A📅 *Date:* ${settings.date}%0A🕓 *Time:* ${settings.time}%0A🔗 *Join Link:* ${settings.link}%0A%0AWe look forward to seeing you there!%0A%0ATeam ProSAR`;
+    // Use the dynamic reminder message if available, otherwise fallback
+    const message = reminderMessage 
+      ? encodeURIComponent(reminderMessage) 
+      : encodeURIComponent(`Hello ${user.fullName},\n\nThank you for registering for the *E-waste Awareness Workshop*!\n\n📅 *Date:* ${settings.date}\n🕓 *Time:* ${settings.time}\n🔗 *Join Link:* ${settings.link}\n\nWe look forward to seeing you there!\n\nTeam ProSAR`);
     
     return `https://wa.me/${phone}?text=${message}`;
   };
@@ -133,19 +185,70 @@ export default function AdminDashboard() {
       </div>
 
       <div className="card">
+        <h2>Send Bulk Reminders</h2>
+        <div style={{ background: '#f9f9f9', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', border: '1px solid #ddd' }}>
+          <div className="form-group">
+            <label>Select Reminder Type</label>
+            <select 
+              className="form-control" 
+              value={selectedReminder} 
+              onChange={(e) => setSelectedReminder(e.target.value)}
+              style={{ marginBottom: '1rem' }}
+            >
+              <option value="1">Reminder 1 (General Upcoming)</option>
+              <option value="2">Reminder 2 (1 Day Before)</option>
+              <option value="3">Reminder 3 (Starting Now / Live)</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Email Subject</label>
+            <input 
+              type="text" 
+              className="form-control" 
+              value={reminderSubject} 
+              onChange={(e) => setReminderSubject(e.target.value)} 
+              placeholder="Email Subject"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Email Message Content</label>
+            <textarea 
+              className="form-control" 
+              rows="8" 
+              value={reminderMessage} 
+              onChange={(e) => setReminderMessage(e.target.value)} 
+              style={{ fontFamily: 'inherit' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button 
+              className="btn" 
+              onClick={sendEmails}
+              disabled={notifyStatus === 'loading' || registrations.length === 0}
+              style={{ background: '#ea4335', color: '#fff', flex: 1, padding: '12px', fontSize: '1rem' }}
+            >
+              {notifyStatus === 'loading' ? <span className="loader"></span> : `📧 Email All (${registrations.length})`}
+            </button>
+
+            <button 
+              className="btn" 
+              type="button"
+              onClick={sendBulkWhatsApp}
+              disabled={registrations.length === 0}
+              style={{ background: '#25D366', color: '#fff', flex: 1, padding: '12px', fontSize: '1rem' }}
+            >
+               💬 Open WhatsApp for All (${registrations.length})
+            </button>
+          </div>
+        </div>
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '10px' }}>
           <h2 style={{ marginBottom: 0 }}>Registered Users</h2>
           <div className="stat-box" style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}>Count: {registrations.length}</div>
         </div>
-        
-        <button 
-          className="btn" 
-          onClick={sendEmails}
-          disabled={notifyStatus === 'loading' || registrations.length === 0}
-          style={{ background: '#ea4335', color: '#fff', marginBottom: '1rem' }}
-        >
-          {notifyStatus === 'loading' ? <span className="loader"></span> : '📧 Send Automatic Emails to All'}
-        </button>
 
         <div className="table-responsive">
           <table>
