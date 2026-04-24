@@ -220,6 +220,14 @@ export default function Home() {
           </>
         )}
       </div>
+      <Link 
+        href="/admin" 
+        style={{ position: 'fixed', bottom: 0, right: 0, width: '40px', height: '40px', opacity: 0, zIndex: 9999, cursor: 'default' }}
+        title=""
+        aria-hidden="true"
+      >
+        .
+      </Link>
     </>
   );
 }
