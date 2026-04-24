@@ -1,8 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
   const [settings, setSettings] = useState(null);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -80,7 +82,11 @@ export default function Home() {
   return (
     <>
       <div className="nav">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div 
+          style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'default', userSelect: 'none' }}
+          onDoubleClick={() => router.push('/admin')}
+          title="ProSAR Logo"
+        >
           <img src="/prosar-logo.png" alt="ProSAR Logo" style={{ height: '40px', borderRadius: '4px' }} />
           <div style={{fontWeight: 800, color: 'var(--primary-color)'}}>ProSAR EcoTech Pvt Ltd</div>
         </div>
@@ -220,14 +226,6 @@ export default function Home() {
           </>
         )}
       </div>
-      <Link 
-        href="/admin" 
-        style={{ position: 'fixed', bottom: 0, right: 0, width: '60px', height: '60px', opacity: 0, zIndex: 9999, cursor: 'default' }}
-        title=""
-        aria-hidden="true"
-      >
-        .
-      </Link>
     </>
   );
 }
