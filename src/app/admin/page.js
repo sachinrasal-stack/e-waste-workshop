@@ -8,13 +8,20 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState('idle');
   
-  const [templates, setTemplates] = useState({
+  // Templates state
+  const [waTemplates, setWaTemplates] = useState({
     welcome: '', rem1: '', rem2: '', rem3: ''
   });
+  const [emailTemplates, setEmailTemplates] = useState({
+    welcome: { subject: '', body: '' },
+    rem1: { subject: '', body: '' },
+    rem2: { subject: '', body: '' },
+    rem3: { subject: '', body: '' }
+  });
+
+  const [mainTab, setMainTab] = useState('dispatch'); 
+  const [templateEditorType, setTemplateEditorType] = useState('wa'); // 'wa' or 'email'
   const [activeTemplateTab, setActiveTemplateTab] = useState('welcome');
-  
-  // New state for main navigation
-  const [mainTab, setMainTab] = useState('participants'); 
 
   useEffect(() => {
     fetchData();
@@ -33,11 +40,32 @@ export default function AdminDashboard() {
       setSettings(settingsData);
       setRegistrations(regData.registrations || []);
 
-      setTemplates({
+      // Initialize WA Templates
+      setWaTemplates({
         welcome: `Hello [NAME],\n\nThank you for registering for the *E-waste Awareness Workshop*!\n\n📅 *Date:* ${settingsData.date}\n🕓 *Time:* ${settingsData.time}\n🔗 *Join Link:* ${settingsData.link}\n\nWe look forward to seeing you there!\n\nTeam ProSAR`,
         rem1: `Dear [NAME],\n\nThis is a first reminder regarding our upcoming E-waste Awareness Workshop.\n\nDate: ${settingsData.date}\nTime: ${settingsData.time}\nJoin Link: ${settingsData.link}\n\nPlease keep the date blocked on your calendar.\n\nBest Regards,\nTeam ProSAR`,
         rem2: `Dear [NAME],\n\nOur E-waste Awareness Workshop is just one day away. We are excited to see you!\n\nDate: ${settingsData.date}\nTime: ${settingsData.time}\nWait for us at: ${settingsData.link}\n\nDon't forget to mark your calendars.\n\nBest Regards,\nTeam ProSAR`,
         rem3: `Dear [NAME],\n\nThe E-waste Awareness Workshop is starting right now! Please click the link below to join us.\n\nJoin Link: ${settingsData.link}\n\nSee you inside!\n\nBest Regards,\nTeam ProSAR`
+      });
+
+      // Initialize Email Templates (Professional)
+      setEmailTemplates({
+        welcome: {
+          subject: `Confirmed: Your Registration for the E-Waste Awareness Workshop`,
+          body: `Dear [NAME],\n\nThank you for taking a proactive step towards environmental responsibility by registering for our upcoming E-Waste Awareness Workshop.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nWe will explore real-world stories and practical steps to manage electronic waste legally and safely. We look forward to seeing you there!\n\nBest Regards,\nTeam ProSAR`
+        },
+        rem1: {
+          subject: `Upcoming: E-Waste Awareness Workshop Reminder`,
+          body: `Dear [NAME],\n\nThis is a friendly reminder for our upcoming workshop on sustainable e-waste management. Please ensure you have marked your calendar.\n\nDate: ${settingsData.date}\nTime: ${settingsData.time}\nJoin Link: ${settingsData.link}\n\nSee you soon!\n\nBest Regards,\nTeam ProSAR`
+        },
+        rem2: {
+          subject: `Reminder: Our E-Waste Workshop is Tomorrow!`,
+          body: `Dear [NAME],\n\nWe are excited to see you tomorrow for the E-Waste Awareness Workshop. Get ready to learn how you can make a real difference.\n\nDate: ${settingsData.date}\nTime: ${settingsData.time}\nJoin Link: ${settingsData.link}\n\nBest Regards,\nTeam ProSAR`
+        },
+        rem3: {
+          subject: `🔴 LIVE NOW: Join the E-Waste Awareness Workshop`,
+          body: `Dear [NAME],\n\nThe E-Waste Awareness Workshop is starting right now! Click the link below to join the session immediately.\n\nJoin Link: ${settingsData.link}\n\nWe are waiting for you!\n\nBest Regards,\nTeam ProSAR`
+        }
       });
     } catch (err) {
       console.error('Failed to fetch data', err);
@@ -47,7 +75,17 @@ export default function AdminDashboard() {
   };
 
   const handleSettingsChange = (e) => setSettings({ ...settings, [e.target.name]: e.target.value });
-  const handleTemplateChange = (e) => setTemplates({ ...templates, [activeTemplateTab]: e.target.value });
+  
+  const handleTemplateChange = (e) => {
+    if (templateEditorType === 'wa') {
+      setWaTemplates({ ...waTemplates, [activeTemplateTab]: e.target.value });
+    } else {
+      setEmailTemplates({ 
+        ...emailTemplates, 
+        [activeTemplateTab]: { ...emailTemplates[activeTemplateTab], [e.target.name]: e.target.value } 
+      });
+    }
+  };
 
   const saveSettings = async (e) => {
     e.preventDefault();
@@ -75,15 +113,15 @@ export default function AdminDashboard() {
   const generateWhatsAppLink = (user, type) => {
     let phone = user.whatsapp.replace(/\D/g, ''); 
     if (phone.length === 10) phone = '91' + phone; 
-    let messageTemplate = templates[type] || templates.welcome;
+    let messageTemplate = waTemplates[type] || waTemplates.welcome;
     let message = messageTemplate.replace(/\[NAME\]/g, user.fullName);
     return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   };
 
-  const generateMailtoLink = (user) => {
-    const subject = encodeURIComponent('E-waste Awareness Workshop');
-    let messageTemplate = templates.welcome;
-    let body = messageTemplate.replace(/\[NAME\]/g, user.fullName);
+  const generateMailtoLink = (user, type) => {
+    const template = emailTemplates[type] || emailTemplates.welcome;
+    const subject = encodeURIComponent(template.subject);
+    let body = template.body.replace(/\[NAME\]/g, user.fullName);
     return `mailto:${user.email}?subject=${subject}&body=${encodeURIComponent(body)}`;
   };
 
@@ -109,7 +147,7 @@ export default function AdminDashboard() {
       <header style={{ background: '#ffffff', padding: '1rem 2rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{ width: '40px', height: '40px', background: '#10b981', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '1.2rem' }}>Pr</div>
-          <h1 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a', fontWeight: 700 }}>ProSAR Admin</h1>
+          <h1 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a', fontWeight: 700 }}>ProSAR Dispatch Admin</h1>
         </div>
         <Link href="/" style={{ color: '#64748b', textDecoration: 'none', fontWeight: 500, padding: '0.5rem 1rem', borderRadius: '6px', transition: 'background 0.2s' }} className="hover-bg-slate">
           Live Site ↗
@@ -117,105 +155,45 @@ export default function AdminDashboard() {
       </header>
 
       {/* Main Tab Navigation */}
-      <div style={{ background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'center', position: 'sticky', top: '72px', zIndex: 9 }}>
-        <div style={{ display: 'flex', gap: '2rem', padding: '0 1rem', maxWidth: '1200px', width: '100%' }}>
-          <button 
-            onClick={() => setMainTab('participants')}
-            style={{ background: 'none', border: 'none', borderBottom: mainTab === 'participants' ? '3px solid #10b981' : '3px solid transparent', color: mainTab === 'participants' ? '#10b981' : '#64748b', padding: '1rem 0.5rem', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s' }}
-          >
-            👥 Participants
-          </button>
-          <button 
-            onClick={() => setMainTab('templates')}
-            style={{ background: 'none', border: 'none', borderBottom: mainTab === 'templates' ? '3px solid #10b981' : '3px solid transparent', color: mainTab === 'templates' ? '#10b981' : '#64748b', padding: '1rem 0.5rem', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s' }}
-          >
-            📝 Templates
-          </button>
-          <button 
-            onClick={() => setMainTab('settings')}
-            style={{ background: 'none', border: 'none', borderBottom: mainTab === 'settings' ? '3px solid #10b981' : '3px solid transparent', color: mainTab === 'settings' ? '#10b981' : '#64748b', padding: '1rem 0.5rem', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s' }}
-          >
-            ⚙️ Event Settings
-          </button>
+      <nav style={{ background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'center', position: 'sticky', top: '72px', zIndex: 9 }}>
+        <div style={{ display: 'flex', gap: '1.5rem', padding: '0 1rem', maxWidth: '1200px', width: '100%', overflowX: 'auto' }}>
+          {['overview', 'dispatch', 'templates', 'settings'].map(tab => (
+            <button 
+              key={tab}
+              onClick={() => setMainTab(tab)}
+              style={{ background: 'none', border: 'none', borderBottom: mainTab === tab ? '3px solid #10b981' : '3px solid transparent', color: mainTab === tab ? '#10b981' : '#64748b', padding: '1rem 0.5rem', fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
+            >
+              {tab === 'overview' ? '📊 Overview' : tab === 'dispatch' ? '🚀 Dispatch' : tab === 'templates' ? '📝 Templates' : '⚙️ Settings'}
+            </button>
+          ))}
         </div>
-      </div>
+      </nav>
 
-      <main style={{ maxWidth: '1200px', margin: '2rem auto', padding: '0 1rem' }}>
+      <main style={{ maxWidth: '1280px', margin: '2rem auto', padding: '0 1rem' }}>
         
-        {/* VIEW: SETTINGS */}
-        {mainTab === 'settings' && (
-          <section style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)', maxWidth: '600px', margin: '0 auto' }}>
-            <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', color: '#0f172a', borderBottom: '2px solid #f1f5f9', paddingBottom: '0.75rem' }}>⚙️ Event Settings</h2>
-            <form onSubmit={saveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>Workshop Date</label>
-                <input type="text" name="date" value={settings.date} onChange={handleSettingsChange} required style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s' }} onFocus={(e)=>e.target.style.borderColor='#10b981'} onBlur={(e)=>e.target.style.borderColor='#cbd5e1'} />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>Workshop Time</label>
-                <input type="text" name="time" value={settings.time} onChange={handleSettingsChange} required style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s' }} onFocus={(e)=>e.target.style.borderColor='#10b981'} onBlur={(e)=>e.target.style.borderColor='#cbd5e1'} />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>Meeting Link</label>
-                <input type="url" name="link" value={settings.link} onChange={handleSettingsChange} required style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s' }} onFocus={(e)=>e.target.style.borderColor='#10b981'} onBlur={(e)=>e.target.style.borderColor='#cbd5e1'} />
-              </div>
-              <button type="submit" disabled={saveStatus === 'loading'} style={{ background: '#10b981', color: 'white', padding: '1rem', borderRadius: '8px', border: 'none', fontSize: '1rem', fontWeight: 600, cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', transition: 'background 0.2s', marginTop: '1rem' }} onMouseOver={(e)=>e.target.style.background='#059669'} onMouseOut={(e)=>e.target.style.background='#10b981'}>
-                {saveStatus === 'loading' ? 'Saving...' : saveStatus === 'success' ? '✔ Saved Successfully' : 'Save Changes & Reset Event'}
-              </button>
-            </form>
-          </section>
+        {/* VIEW: OVERVIEW */}
+        {mainTab === 'overview' && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+            <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', textAlign: 'center' }}>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#10b981' }}>{registrations.length}</div>
+              <div style={{ color: '#64748b', fontWeight: 600 }}>Active Registrations</div>
+            </div>
+            <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.5rem' }}>{settings.date}</div>
+              <div style={{ color: '#64748b', fontWeight: 600 }}>Current Event Date</div>
+            </div>
+            <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+               <button onClick={exportToCSV} style={{ background: '#10b981', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer' }}>📥 Export Participants (CSV)</button>
+            </div>
+          </div>
         )}
 
-        {/* VIEW: TEMPLATES */}
-        {mainTab === 'templates' && (
-          <section style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)', maxWidth: '800px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f1f5f9', paddingBottom: '0.75rem', marginBottom: '1.5rem' }}>
-              <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a' }}>📝 Communication Templates</h2>
-            </div>
-            <p style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '1.5rem', lineHeight: 1.5 }}>
-              Use the <code style={{background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px'}}>[NAME]</code> tag to automatically insert the participant's name. <br/>
-              <em>Edits made here are instantly applied to the buttons in the Participants tab.</em>
-            </p>
-            
-            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-              {['welcome', 'rem1', 'rem2', 'rem3'].map((tab) => (
-                <button 
-                  key={tab} 
-                  onClick={() => setActiveTemplateTab(tab)}
-                  style={{ 
-                    padding: '0.5rem 1rem', border: 'none', borderRadius: '20px', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
-                    background: activeTemplateTab === tab ? '#10b981' : '#f1f5f9', 
-                    color: activeTemplateTab === tab ? 'white' : '#475569',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  {tab === 'welcome' ? 'Welcome' : tab === 'rem1' ? 'Reminder 1' : tab === 'rem2' ? 'Reminder 2' : 'Reminder 3'}
-                </button>
-              ))}
-            </div>
-
-            <textarea 
-              value={templates[activeTemplateTab]} 
-              onChange={handleTemplateChange}
-              style={{ width: '100%', height: '300px', padding: '1rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit', resize: 'vertical', outline: 'none' }}
-              onFocus={(e)=>e.target.style.borderColor='#10b981'} onBlur={(e)=>e.target.style.borderColor='#cbd5e1'}
-            />
-          </section>
-        )}
-
-        {/* VIEW: PARTICIPANTS */}
-        {mainTab === 'participants' && (
-          <section style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-              <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a' }}>👥 Registered Participants</h2>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <div style={{ background: '#f1f5f9', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 700, color: '#334155' }}>
-                  Total: {registrations.length}
-                </div>
-                <button onClick={exportToCSV} style={{ background: '#10b981', color: 'white', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  📥 Export CSV
-                </button>
-              </div>
+        {/* VIEW: DISPATCH */}
+        {mainTab === 'dispatch' && (
+          <section style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a' }}>🚀 Manual Reminder Dispatch</h2>
+              <p style={{ margin: 0, color: '#64748b', fontSize: '0.875rem' }}>Send individual reminders to participants via WhatsApp or Email.</p>
             </div>
 
             <div style={{ overflowX: 'auto' }}>
@@ -223,46 +201,38 @@ export default function AdminDashboard() {
                 <thead>
                   <tr style={{ borderBottom: '2px solid #f1f5f9' }}>
                     <th style={{ padding: '1rem 0.5rem', color: '#475569', fontWeight: 600, fontSize: '0.875rem' }}>Participant</th>
-                    <th style={{ padding: '1rem 0.5rem', color: '#475569', fontWeight: 600, fontSize: '0.875rem' }}>City / Org</th>
-                    <th style={{ padding: '1rem 0.5rem', color: '#475569', fontWeight: 600, fontSize: '0.875rem' }}>WhatsApp</th>
-                    <th style={{ padding: '1rem 0.5rem', color: '#475569', fontWeight: 600, fontSize: '0.875rem', textAlign: 'center' }}>Actions</th>
+                    <th style={{ padding: '1rem 0.5rem', color: '#475569', fontWeight: 600, fontSize: '0.875rem', textAlign: 'center' }}>WhatsApp Reminders</th>
+                    <th style={{ padding: '1rem 0.5rem', color: '#475569', fontWeight: 600, fontSize: '0.875rem', textAlign: 'center' }}>Email Reminders</th>
                   </tr>
                 </thead>
                 <tbody>
                   {registrations.length === 0 ? (
-                    <tr><td colSpan="4" style={{ padding: '3rem', textAlign: 'center', color: '#64748b', fontSize: '1rem' }}>No registrations found for this event.</td></tr>
+                    <tr><td colSpan="3" style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>No registrations found.</td></tr>
                   ) : (
                     registrations.map(reg => (
                       <tr key={reg.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                         <td style={{ padding: '1rem 0.5rem' }}>
-                          <div style={{ fontWeight: 600, color: '#0f172a', fontSize: '1rem' }}>{reg.fullName}</div>
-                          <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>{reg.email}</div>
+                          <div style={{ fontWeight: 600, color: '#0f172a' }}>{reg.fullName}</div>
+                          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{reg.whatsapp} | {reg.city}</div>
                         </td>
-                        <td style={{ padding: '1rem 0.5rem', fontSize: '0.9rem', color: '#334155' }}>
-                          {reg.city}<br/><span style={{ color: '#64748b' }}>{reg.organization}</span>
-                        </td>
-                        <td style={{ padding: '1rem 0.5rem', fontSize: '0.9rem', color: '#334155', fontWeight: 500 }}>{reg.whatsapp}</td>
+                        
+                        {/* WhatsApp Cluster */}
                         <td style={{ padding: '1rem 0.5rem' }}>
-                          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'center' }}>
-                            {/* Welcome Button */}
-                            <a href={generateWhatsAppLink(reg, 'welcome')} target="_blank" rel="noreferrer" title="Send Welcome via WhatsApp" style={{ background: '#25D366', color: 'white', padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                              💬 Welcome
-                            </a>
-                            
-                            {/* Separator */}
-                            <div style={{ width: '1px', height: '24px', background: '#cbd5e1', margin: '0 0.5rem' }}></div>
+                          <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
+                            <a href={generateWhatsAppLink(reg, 'welcome')} target="_blank" rel="noreferrer" title="Welcome" style={{ padding: '0.5rem', background: '#25D366', color: 'white', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, textDecoration: 'none' }}>W</a>
+                            <a href={generateWhatsAppLink(reg, 'rem1')} target="_blank" rel="noreferrer" title="Rem 1" style={{ padding: '0.5rem', background: '#25D366', color: 'white', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, textDecoration: 'none', opacity: 0.85 }}>R1</a>
+                            <a href={generateWhatsAppLink(reg, 'rem2')} target="_blank" rel="noreferrer" title="Rem 2" style={{ padding: '0.5rem', background: '#25D366', color: 'white', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, textDecoration: 'none', opacity: 0.75 }}>R2</a>
+                            <a href={generateWhatsAppLink(reg, 'rem3')} target="_blank" rel="noreferrer" title="Rem 3" style={{ padding: '0.5rem', background: '#25D366', color: 'white', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, textDecoration: 'none', opacity: 0.65 }}>R3</a>
+                          </div>
+                        </td>
 
-                            {/* Reminders */}
-                            <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
-                              <a href={generateWhatsAppLink(reg, 'rem1')} target="_blank" rel="noreferrer" title="Reminder 1" style={{ padding: '0.5rem 0.75rem', fontSize: '0.8rem', fontWeight: 600, color: '#334155', textDecoration: 'none', borderRight: '1px solid #e2e8f0' }} className="hover-bg-e2e8f0">R1</a>
-                              <a href={generateWhatsAppLink(reg, 'rem2')} target="_blank" rel="noreferrer" title="Reminder 2" style={{ padding: '0.5rem 0.75rem', fontSize: '0.8rem', fontWeight: 600, color: '#334155', textDecoration: 'none', borderRight: '1px solid #e2e8f0' }} className="hover-bg-e2e8f0">R2</a>
-                              <a href={generateWhatsAppLink(reg, 'rem3')} target="_blank" rel="noreferrer" title="Reminder 3" style={{ padding: '0.5rem 0.75rem', fontSize: '0.8rem', fontWeight: 600, color: '#334155', textDecoration: 'none' }} className="hover-bg-e2e8f0">R3</a>
-                            </div>
-
-                            {/* Email */}
-                            <a href={generateMailtoLink(reg)} title="Send Email" style={{ background: '#ea4335', color: 'white', width: '32px', height: '32px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', marginLeft: '0.5rem' }}>
-                              📧
-                            </a>
+                        {/* Email Cluster */}
+                        <td style={{ padding: '1rem 0.5rem' }}>
+                          <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
+                            <a href={generateMailtoLink(reg, 'welcome')} title="Welcome Email" style={{ padding: '0.5rem', background: '#ea4335', color: 'white', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, textDecoration: 'none' }}>W</a>
+                            <a href={generateMailtoLink(reg, 'rem1')} title="Rem 1 Email" style={{ padding: '0.5rem', background: '#ea4335', color: 'white', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, textDecoration: 'none', opacity: 0.85 }}>R1</a>
+                            <a href={generateMailtoLink(reg, 'rem2')} title="Rem 2 Email" style={{ padding: '0.5rem', background: '#ea4335', color: 'white', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, textDecoration: 'none', opacity: 0.75 }}>R2</a>
+                            <a href={generateMailtoLink(reg, 'rem3')} title="Rem 3 Email" style={{ padding: '0.5rem', background: '#ea4335', color: 'white', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, textDecoration: 'none', opacity: 0.65 }}>R3</a>
                           </div>
                         </td>
                       </tr>
@@ -271,6 +241,71 @@ export default function AdminDashboard() {
                 </tbody>
               </table>
             </div>
+          </section>
+        )}
+
+        {/* VIEW: TEMPLATES */}
+        {mainTab === 'templates' && (
+          <section style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', maxWidth: '900px', margin: '0 auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f1f5f9', paddingBottom: '1rem', marginBottom: '2rem' }}>
+              <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a' }}>📝 Template Editor</h2>
+              <div style={{ display: 'flex', background: '#f1f5f9', padding: '4px', borderRadius: '8px' }}>
+                <button onClick={() => setTemplateEditorType('wa')} style={{ border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, background: templateEditorType === 'wa' ? 'white' : 'transparent', color: templateEditorType === 'wa' ? '#10b981' : '#64748b', boxShadow: templateEditorType === 'wa' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}>WhatsApp</button>
+                <button onClick={() => setTemplateEditorType('email')} style={{ border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, background: templateEditorType === 'email' ? 'white' : 'transparent', color: templateEditorType === 'email' ? '#ea4335' : '#64748b', boxShadow: templateEditorType === 'email' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}>Email</button>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+              {['welcome', 'rem1', 'rem2', 'rem3'].map((tab) => (
+                <button key={tab} onClick={() => setActiveTemplateTab(tab)} style={{ padding: '0.5rem 1rem', border: 'none', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', background: activeTemplateTab === tab ? '#334155' : '#f1f5f9', color: activeTemplateTab === tab ? 'white' : '#475569' }}>
+                  {tab === 'welcome' ? 'Welcome' : `Rem ${tab.slice(-1)}`}
+                </button>
+              ))}
+            </div>
+
+            {templateEditorType === 'wa' ? (
+              <textarea 
+                value={waTemplates[activeTemplateTab]} 
+                onChange={handleTemplateChange}
+                style={{ width: '100%', height: '350px', padding: '1.25rem', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit', outline: 'none' }}
+                onFocus={(e)=>e.target.style.borderColor='#10b981'} onBlur={(e)=>e.target.style.borderColor='#cbd5e1'}
+              />
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.4rem' }}>Email Subject Line</label>
+                  <input type="text" name="subject" value={emailTemplates[activeTemplateTab].subject} onChange={handleTemplateChange} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem', fontWeight: 600 }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.4rem' }}>Email Body Content</label>
+                  <textarea name="body" value={emailTemplates[activeTemplateTab].body} onChange={handleTemplateChange} style={{ width: '100%', height: '300px', padding: '1.25rem', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit', outline: 'none' }} />
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* VIEW: SETTINGS */}
+        {mainTab === 'settings' && (
+          <section style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', maxWidth: '600px', margin: '0 auto' }}>
+            <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', color: '#0f172a', borderBottom: '2px solid #f1f5f9', paddingBottom: '0.75rem' }}>⚙️ Event Settings</h2>
+            <form onSubmit={saveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>Workshop Date</label>
+                <input type="text" name="date" value={settings.date} onChange={handleSettingsChange} required style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>Workshop Time</label>
+                <input type="text" name="time" value={settings.time} onChange={handleSettingsChange} required style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>Meeting Link</label>
+                <input type="url" name="link" value={settings.link} onChange={handleSettingsChange} required style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem' }} />
+              </div>
+              <button type="submit" disabled={saveStatus === 'loading'} style={{ background: '#10b981', color: 'white', padding: '1rem', borderRadius: '8px', border: 'none', fontSize: '1rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s', marginTop: '1rem' }}>
+                {saveStatus === 'loading' ? 'Saving...' : saveStatus === 'success' ? '✔ Saved Successfully' : 'Save Changes & Reset Event'}
+              </button>
+            </form>
           </section>
         )}
 
