@@ -320,10 +320,32 @@ th {
 }
 
 @keyframes flashAttention {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.1; }
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.2; transform: scale(1.02); }
 }
 
 .flash-attention {
-  animation: flashAttention 2.5s ease-in-out infinite;
+  animation: flashAttention 0.7s ease-in-out infinite;
+}
+
+@keyframes flashlightModern {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.flash-professional {
+  background: linear-gradient(
+    110deg,
+    #14532d 0%,
+    #14532d 40%,
+    #4ade80 50%,
+    #14532d 60%,
+    #14532d 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: flashlightModern 5s linear 5 reverse forwards;
+  display: inline-block;
 }

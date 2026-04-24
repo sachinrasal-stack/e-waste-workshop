@@ -145,6 +145,36 @@ export default function AdminDashboard() {
     return `https://wa.me/${phone}?text=${message}`;
   };
 
+  const exportToCSV = () => {
+    if (registrations.length === 0) {
+      alert("No registrations to export.");
+      return;
+    }
+    
+    const headers = ['Name', 'Email', 'Organization', 'City', 'WhatsApp', 'Registration Date'];
+    
+    const rows = registrations.map(reg => [
+      `"${reg.fullName || ''}"`,
+      `"${reg.email || ''}"`,
+      `"${reg.organization || ''}"`,
+      `"${reg.city || ''}"`,
+      `"${reg.whatsapp || ''}"`,
+      `"${new Date(reg.createdAt).toLocaleString()}"`
+    ]);
+    
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(',') + '\n' 
+      + rows.map(e => e.join(',')).join('\n');
+      
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `workshop_participants_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
@@ -247,7 +277,18 @@ export default function AdminDashboard() {
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '10px' }}>
           <h2 style={{ marginBottom: 0 }}>Registered Users</h2>
-          <div className="stat-box" style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}>Count: {registrations.length}</div>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <button 
+              onClick={exportToCSV} 
+              className="btn" 
+              style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+            >
+              📥 Export to Excel
+            </button>
+            <div className="stat-box" style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px', fontWeight: 700 }}>
+              Count: {registrations.length}
+            </div>
+          </div>
         </div>
 
         <div className="table-responsive">

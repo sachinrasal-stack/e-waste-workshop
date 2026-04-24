@@ -22,14 +22,23 @@ export async function getData() {
     createdAt: r.created_at
   }));
 
-  // Clean settings data without ID for frontend compatibility
   const settingsData = settingsRes.data 
-    ? { date: settingsRes.data.date, time: settingsRes.data.time, link: settingsRes.data.link } 
+    ? { 
+        date: settingsRes.data.date, 
+        time: settingsRes.data.time, 
+        link: settingsRes.data.link,
+        last_reset_at: settingsRes.data.last_reset_at
+      } 
     : defaultSettings;
+
+  // Filter registrations to only show those created after the last reset
+  const filteredRegistrations = settingsData.last_reset_at
+    ? formattedRegistrations.filter(r => new Date(r.createdAt) > new Date(settingsData.last_reset_at))
+    : formattedRegistrations;
 
   return {
     settings: settingsData,
-    registrations: formattedRegistrations
+    registrations: filteredRegistrations
   };
 }
 
@@ -46,7 +55,13 @@ export async function addRegistration(user) {
 }
 
 export async function updateSettings(settings) {
-  const { data, error } = await supabase.from('settings').upsert({ id: 1, ...settings }).select();
+  const { data, error } = await supabase.from('settings').upsert({ 
+    id: 1, 
+    date: settings.date,
+    time: settings.time,
+    link: settings.link,
+    last_reset_at: new Date().toISOString() 
+  }).select();
   if (error) throw error;
   if (!data || data.length === 0) {
     throw new Error('Database Update Failed: Record was blocked by Supabase Row-Level Security (RLS). Please check your Supabase Table RLS Policies.');

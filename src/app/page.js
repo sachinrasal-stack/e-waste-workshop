@@ -88,10 +88,10 @@ export default function Home() {
 
       <div className="card">
         <div className="hero-title-container">
-          <h1 className="text-center" style={{ margin: 0, fontWeight: 900, fontSize: 'min(7vw, 2rem)', letterSpacing: '-0.5px' }}>
-            <span style={{ display: 'block', fontSize: '1.1em', marginBottom: '0.2rem', color: '#14532d' }}>Electronic Waste</span>
-            <span style={{ display: 'block', fontSize: '1.1em', marginBottom: '0.4rem', color: '#14532d' }}>(E-waste)</span>
-            <span style={{ display: 'block', fontSize: '0.9em', color: '#14532d' }}>Awareness Workshop</span>
+          <h1 className="text-center flash-professional" style={{ margin: 0, fontWeight: 900, fontSize: 'min(7vw, 2rem)', letterSpacing: '-0.5px' }}>
+            <span style={{ display: 'block', fontSize: '1.1em', marginBottom: '0.2rem' }}>Electronic Waste</span>
+            <span style={{ display: 'block', fontSize: '1.1em', marginBottom: '0.4rem' }}>(E-waste)</span>
+            <span style={{ display: 'block', fontSize: '0.9em' }}>Awareness Workshop</span>
           </h1>
         </div>
         <div className="mb-2" style={{ textAlign: 'left' }}>
