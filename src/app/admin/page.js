@@ -145,6 +145,16 @@ export default function AdminDashboard() {
     return `https://wa.me/${phone}?text=${message}`;
   };
 
+  const generateMailtoLink = (user) => {
+    const subject = encodeURIComponent(reminderSubject || 'E-waste Awareness Workshop');
+    // Using the same message, just replacing the default WhatsApp greeting if no reminder message is selected
+    const body = reminderMessage 
+      ? encodeURIComponent(reminderMessage) 
+      : encodeURIComponent(`Hello ${user.fullName},\n\nThank you for registering for the E-waste Awareness Workshop!\n\nDate: ${settings.date}\nTime: ${settings.time}\nJoin Link: ${settings.link}\n\nWe look forward to seeing you there!\n\nTeam ProSAR`);
+    
+    return `mailto:${user.email}?subject=${subject}&body=${body}`;
+  };
+
   const exportToCSV = () => {
     if (registrations.length === 0) {
       alert("No registrations to export.");
@@ -253,7 +263,8 @@ export default function AdminDashboard() {
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '10px' }}>
+          {/* Temporarily hidden bulk actions per request */}
+          {/* <div style={{ display: 'flex', gap: '10px' }}>
             <button 
               className="btn" 
               onClick={sendEmails}
@@ -272,7 +283,7 @@ export default function AdminDashboard() {
             >
                💬 Open WhatsApp for All (${registrations.length})
             </button>
-          </div>
+          </div> */}
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '10px' }}>
@@ -315,15 +326,24 @@ export default function AdminDashboard() {
                     <td>{reg.city}</td>
                     <td>{reg.whatsapp}</td>
                     <td>
-                      <a 
-                        href={generateWhatsAppLink(reg)}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="btn"
-                        style={{ padding: '0.4rem 0.6rem', fontSize: '0.8rem', background: '#25D366', color: '#fff', display: 'inline-block', textDecoration: 'none' }}
-                      >
-                        💬 Send WhatsApp
-                      </a>
+                      <div style={{ display: 'flex', gap: '5px' }}>
+                        <a 
+                          href={generateWhatsAppLink(reg)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="btn"
+                          style={{ padding: '0.4rem 0.6rem', fontSize: '0.8rem', background: '#25D366', color: '#fff', display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}
+                        >
+                          💬 WhatsApp
+                        </a>
+                        <a 
+                          href={generateMailtoLink(reg)}
+                          className="btn"
+                          style={{ padding: '0.4rem 0.6rem', fontSize: '0.8rem', background: '#ea4335', color: '#fff', display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}
+                        >
+                          📧 Email
+                        </a>
+                      </div>
                     </td>
                   </tr>
                 ))
