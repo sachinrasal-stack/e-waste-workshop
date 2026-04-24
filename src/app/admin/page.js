@@ -65,19 +65,19 @@ export default function AdminDashboard() {
         setEmailTemplates({
           welcome: {
             subject: `Confirmed: Your Registration for the E-Waste Awareness Workshop`,
-            body: `Dear [NAME],\n\nThank you for taking a proactive step towards environmental responsibility by registering for our upcoming E-Waste Awareness Workshop.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nIn this session, we will explore real-world stories and practical steps to manage electronic waste legally and safely.\n\nWe look forward to seeing you there!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
+            body: `Dear [NAME],\n\nThank you for taking a proactive step towards environmental responsibility by registering for our upcoming E-Waste Awareness Workshop.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n\nJoin Link:\n${settingsData.link}\n\nIn this session, we will explore real-world stories and practical steps to manage electronic waste legally and safely.\n\nWe look forward to seeing you there!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
           },
           rem1: {
             subject: `Upcoming: E-Waste Awareness Workshop Reminder`,
-            body: `Dear [NAME],\n\nThis is a friendly reminder for our upcoming workshop on sustainable e-waste management.\n\nAs a responsible citizen, your participation is vital in protecting our environment from hazardous electronic waste.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nPlease ensure you have marked your calendar. See you soon!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
+            body: `Dear [NAME],\n\nThis is a friendly reminder for our upcoming workshop on sustainable e-waste management.\n\nAs a responsible citizen, your participation is vital in protecting our environment from hazardous electronic waste.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n\nJoin Link:\n${settingsData.link}\n\nPlease ensure you have marked your calendar. See you soon!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
           },
           rem2: {
             subject: `Reminder: Our E-Waste Workshop is Tomorrow!`,
-            body: `Dear [NAME],\n\nWe are excited to see you tomorrow for the E-Waste Awareness Workshop! \n\nGet ready to learn how you can make a real difference in the way we handle electronic waste at home and in the workplace.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
+            body: `Dear [NAME],\n\nWe are excited to see you tomorrow for the E-Waste Awareness Workshop! \n\nGet ready to learn how you can make a real difference in the way we handle electronic waste at home and in the workplace.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n\nJoin Link:\n${settingsData.link}\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
           },
           rem3: {
             subject: `🔴 LIVE NOW: Join the E-Waste Awareness Workshop`,
-            body: `Dear [NAME],\n\nThe E-Waste Awareness Workshop is starting right now!\n\nPlease click the link below to join the session immediately:\n\n🔗 Join Link: ${settingsData.link}\n\nWe are waiting for you inside!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
+            body: `Dear [NAME],\n\nThe E-Waste Awareness Workshop is starting right now!\n\nPlease click the link below to join the session immediately:\n\n${settingsData.link}\n\nWe are waiting for you inside!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
           }
         });
       }
