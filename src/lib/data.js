@@ -67,3 +67,22 @@ export async function updateSettings(settings) {
     throw new Error('Database Update Failed: Record was blocked by Supabase Row-Level Security (RLS). Please check your Supabase Table RLS Policies.');
   }
 }
+
+export async function getTemplates() {
+  const { data, error } = await supabase.from('templates').select('*');
+  if (error) throw error;
+  return data || [];
+}
+
+export async function updateTemplates(templatesArray) {
+  // We process them one by one to avoid requiring a unique constraint for upsert
+  for (const t of templatesArray) {
+    const { error } = await supabase.from('templates').upsert({
+      type: t.type,
+      name: t.name,
+      content: t.content,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'type,name' }); 
+    if (error) console.error('Failed to save template', t.name, error);
+  }
+}

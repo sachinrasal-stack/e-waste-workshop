@@ -7,6 +7,7 @@ export default function AdminDashboard() {
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState('idle');
+  const [templateSaveStatus, setTemplateSaveStatus] = useState('idle');
   
   // Templates state
   const [waTemplates, setWaTemplates] = useState({
@@ -29,44 +30,57 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     try {
-      const [settingsRes, regRes] = await Promise.all([
+      const [settingsRes, regRes, tempRes] = await Promise.all([
         fetch('/api/settings', { cache: 'no-store' }),
-        fetch('/api/register', { cache: 'no-store' })
+        fetch('/api/register', { cache: 'no-store' }),
+        fetch('/api/templates', { cache: 'no-store' })
       ]);
       
       const settingsData = await settingsRes.json();
       const regData = await regRes.json();
+      const templatesData = await tempRes.json();
       
       setSettings(settingsData);
       setRegistrations(regData.registrations || []);
 
-      // Initialize WA Templates
-      setWaTemplates({
-        welcome: `Hello [NAME],\n\nThank you for registering for the *E-waste Awareness Workshop*!\n\n📅 *Date:* ${settingsData.date}\n🕓 *Time:* ${settingsData.time}\n🔗 *Join Link:* ${settingsData.link}\n\nWe look forward to seeing you there!\n\nTeam ProSAR`,
-        rem1: `Dear [NAME],\n\nThis is a first reminder regarding our upcoming E-waste Awareness Workshop.\n\nDate: ${settingsData.date}\nTime: ${settingsData.time}\nJoin Link: ${settingsData.link}\n\nPlease keep the date blocked on your calendar.\n\nBest Regards,\nTeam ProSAR`,
-        rem2: `Dear [NAME],\n\nOur E-waste Awareness Workshop is just one day away. We are excited to see you!\n\nDate: ${settingsData.date}\nTime: ${settingsData.time}\nWait for us at: ${settingsData.link}\n\nDon't forget to mark your calendars.\n\nBest Regards,\nTeam ProSAR`,
-        rem3: `Dear [NAME],\n\nThe E-waste Awareness Workshop is starting right now! Please click the link below to join us.\n\nJoin Link: ${settingsData.link}\n\nSee you inside!\n\nBest Regards,\nTeam ProSAR`
-      });
+      // If templates exist in DB, use them. Otherwise use defaults.
+      if (Array.isArray(templatesData) && templatesData.length > 0) {
+        const wa = {};
+        const email = {};
+        templatesData.forEach(t => {
+          if (t.type === 'wa') wa[t.name] = t.content.body;
+          if (t.type === 'email') email[t.name] = t.content;
+        });
+        setWaTemplates(prev => ({ ...prev, ...wa }));
+        setEmailTemplates(prev => ({ ...prev, ...email }));
+      } else {
+        // Defaults
+        setWaTemplates({
+          welcome: `Hello [NAME],\n\nThank you for registering for the *E-waste Awareness Workshop*!\n\n📅 *Date:* ${settingsData.date}\n🕓 *Time:* ${settingsData.time}\n🔗 *Join Link:* ${settingsData.link}\n\nWe look forward to seeing you there!\n\nTeam ProSAR`,
+          rem1: `Dear [NAME],\n\nThis is a first reminder regarding our upcoming E-waste Awareness Workshop.\n\nDate: ${settingsData.date}\nTime: ${settingsData.time}\nJoin Link: ${settingsData.link}\n\nPlease keep the date blocked on your calendar.\n\nBest Regards,\nTeam ProSAR`,
+          rem2: `Dear [NAME],\n\nOur E-waste Awareness Workshop is just one day away. We are excited to see you!\n\nDate: ${settingsData.date}\nTime: ${settingsData.time}\nWait for us at: ${settingsData.link}\n\nDon't forget to mark your calendars.\n\nBest Regards,\nTeam ProSAR`,
+          rem3: `Dear [NAME],\n\nThe E-waste Awareness Workshop is starting right now! Please click the link below to join us.\n\nJoin Link: ${settingsData.link}\n\nSee you inside!\n\nBest Regards,\nTeam ProSAR`
+        });
 
-      // Initialize Email Templates (Professional & Structured)
-      setEmailTemplates({
-        welcome: {
-          subject: `Confirmed: Your Registration for the E-Waste Awareness Workshop`,
-          body: `Dear [NAME],\n\nThank you for taking a proactive step towards environmental responsibility by registering for our upcoming E-Waste Awareness Workshop.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nIn this session, we will explore real-world stories and practical steps to manage electronic waste legally and safely.\n\nWe look forward to seeing you there!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
-        },
-        rem1: {
-          subject: `Upcoming: E-Waste Awareness Workshop Reminder`,
-          body: `Dear [NAME],\n\nThis is a friendly reminder for our upcoming workshop on sustainable e-waste management.\n\nAs a responsible citizen, your participation is vital in protecting our environment from hazardous electronic waste.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nPlease ensure you have marked your calendar. See you soon!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
-        },
-        rem2: {
-          subject: `Reminder: Our E-Waste Workshop is Tomorrow!`,
-          body: `Dear [NAME],\n\nWe are excited to see you tomorrow for the E-Waste Awareness Workshop! \n\nGet ready to learn how you can make a real difference in the way we handle electronic waste at home and in the workplace.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
-        },
-        rem3: {
-          subject: `🔴 LIVE NOW: Join the E-Waste Awareness Workshop`,
-          body: `Dear [NAME],\n\nThe E-Waste Awareness Workshop is starting right now!\n\nPlease click the link below to join the session immediately:\n\n🔗 Join Link: ${settingsData.link}\n\nWe are waiting for you inside!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
-        }
-      });
+        setEmailTemplates({
+          welcome: {
+            subject: `Confirmed: Your Registration for the E-Waste Awareness Workshop`,
+            body: `Dear [NAME],\n\nThank you for taking a proactive step towards environmental responsibility by registering for our upcoming E-Waste Awareness Workshop.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nIn this session, we will explore real-world stories and practical steps to manage electronic waste legally and safely.\n\nWe look forward to seeing you there!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
+          },
+          rem1: {
+            subject: `Upcoming: E-Waste Awareness Workshop Reminder`,
+            body: `Dear [NAME],\n\nThis is a friendly reminder for our upcoming workshop on sustainable e-waste management.\n\nAs a responsible citizen, your participation is vital in protecting our environment from hazardous electronic waste.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nPlease ensure you have marked your calendar. See you soon!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
+          },
+          rem2: {
+            subject: `Reminder: Our E-Waste Workshop is Tomorrow!`,
+            body: `Dear [NAME],\n\nWe are excited to see you tomorrow for the E-Waste Awareness Workshop! \n\nGet ready to learn how you can make a real difference in the way we handle electronic waste at home and in the workplace.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
+          },
+          rem3: {
+            subject: `🔴 LIVE NOW: Join the E-Waste Awareness Workshop`,
+            body: `Dear [NAME],\n\nThe E-Waste Awareness Workshop is starting right now!\n\nPlease click the link below to join the session immediately:\n\n🔗 Join Link: ${settingsData.link}\n\nWe are waiting for you inside!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
+          }
+        });
+      }
     } catch (err) {
       console.error('Failed to fetch data', err);
     } finally {
@@ -87,6 +101,42 @@ export default function AdminDashboard() {
     }
   };
 
+  const applyFormatting = (tag) => {
+    const textarea = document.getElementById('template-editor');
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selectedText = text.substring(start, end);
+
+    let replacement = '';
+    if (tag === 'B') replacement = `*${selectedText}*`;
+    else if (tag === 'I') replacement = `_${selectedText}_`;
+    else if (tag === 'S') replacement = `~${selectedText}~`;
+    else if (tag === 'NAME') replacement = `[NAME]`;
+
+    const newText = text.substring(0, start) + replacement + text.substring(end);
+    
+    if (templateEditorType === 'wa') {
+      setWaTemplates({ ...waTemplates, [activeTemplateTab]: newText });
+    } else {
+      setEmailTemplates({ 
+        ...emailTemplates, 
+        [activeTemplateTab]: { ...emailTemplates[activeTemplateTab], body: newText } 
+      });
+    }
+
+    setTimeout(() => {
+      textarea.focus();
+      if (tag === 'NAME') {
+        textarea.setSelectionRange(start + 6, start + 6);
+      } else {
+        textarea.setSelectionRange(start + 1, start + 1 + selectedText.length);
+      }
+    }, 0);
+  };
+
   const saveSettings = async (e) => {
     e.preventDefault();
     setSaveStatus('loading');
@@ -99,14 +149,36 @@ export default function AdminDashboard() {
       if (res.ok) {
         setSaveStatus('success');
         setTimeout(() => setSaveStatus('idle'), 3000);
-      } else {
-        const errorData = await res.json();
-        alert(`Error: ${errorData.message}`);
-        setSaveStatus('error');
       }
     } catch (err) {
       alert(`Network Error: ${err.message}`);
       setSaveStatus('error');
+    }
+  };
+
+  const saveAllTemplates = async () => {
+    setTemplateSaveStatus('loading');
+    const allTemplates = [
+      ...Object.entries(waTemplates).map(([name, body]) => ({ type: 'wa', name, content: { body } })),
+      ...Object.entries(emailTemplates).map(([name, content]) => ({ type: 'email', name, content }))
+    ];
+
+    try {
+      const res = await fetch('/api/templates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(allTemplates)
+      });
+      if (res.ok) {
+        setTemplateSaveStatus('success');
+        setTimeout(() => setTemplateSaveStatus('idle'), 3000);
+      } else {
+        alert('Failed to save templates');
+        setTemplateSaveStatus('error');
+      }
+    } catch (err) {
+      alert('Network Error');
+      setTemplateSaveStatus('error');
     }
   };
 
@@ -122,7 +194,6 @@ export default function AdminDashboard() {
     const template = emailTemplates[type] || emailTemplates.welcome;
     const subject = encodeURIComponent(template.subject);
     let body = template.body.replace(/\[NAME\]/g, user.fullName);
-    // Use %0D%0A for newlines to ensure compatibility across all email clients
     const encodedBody = encodeURIComponent(body).replace(/%0A/g, '%0D%0A');
     return `mailto:${user.email}?subject=${subject}&body=${encodedBody}`;
   };
@@ -218,7 +289,6 @@ export default function AdminDashboard() {
                           <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{reg.whatsapp} | {reg.city}</div>
                         </td>
                         
-                        {/* WhatsApp Cluster */}
                         <td style={{ padding: '1rem 0.5rem' }}>
                           <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
                             <a href={generateWhatsAppLink(reg, 'welcome')} target="_blank" rel="noreferrer" title="Welcome" style={{ padding: '0.5rem', background: '#25D366', color: 'white', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, textDecoration: 'none' }}>W</a>
@@ -228,7 +298,6 @@ export default function AdminDashboard() {
                           </div>
                         </td>
 
-                        {/* Email Cluster */}
                         <td style={{ padding: '1rem 0.5rem' }}>
                           <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
                             <a href={generateMailtoLink(reg, 'welcome')} title="Welcome Email" style={{ padding: '0.5rem', background: '#ea4335', color: 'white', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, textDecoration: 'none' }}>W</a>
@@ -249,38 +318,58 @@ export default function AdminDashboard() {
         {/* VIEW: TEMPLATES */}
         {mainTab === 'templates' && (
           <section style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', maxWidth: '900px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f1f5f9', paddingBottom: '1rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f1f5f9', paddingBottom: '1rem', marginBottom: '1rem' }}>
               <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a' }}>📝 Template Editor</h2>
-              <div style={{ display: 'flex', background: '#f1f5f9', padding: '4px', borderRadius: '8px' }}>
-                <button onClick={() => setTemplateEditorType('wa')} style={{ border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, background: templateEditorType === 'wa' ? 'white' : 'transparent', color: templateEditorType === 'wa' ? '#10b981' : '#64748b', boxShadow: templateEditorType === 'wa' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}>WhatsApp</button>
-                <button onClick={() => setTemplateEditorType('email')} style={{ border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, background: templateEditorType === 'email' ? 'white' : 'transparent', color: templateEditorType === 'email' ? '#ea4335' : '#64748b', boxShadow: templateEditorType === 'email' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}>Email</button>
-              </div>
-            </div>
-            
-            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
-              {['welcome', 'rem1', 'rem2', 'rem3'].map((tab) => (
-                <button key={tab} onClick={() => setActiveTemplateTab(tab)} style={{ padding: '0.5rem 1rem', border: 'none', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', background: activeTemplateTab === tab ? '#334155' : '#f1f5f9', color: activeTemplateTab === tab ? 'white' : '#475569' }}>
-                  {tab === 'welcome' ? 'Welcome' : `Rem ${tab.slice(-1)}`}
-                </button>
-              ))}
+              <button 
+                onClick={saveAllTemplates} 
+                disabled={templateSaveStatus === 'loading'}
+                style={{ background: '#10b981', color: 'white', padding: '0.6rem 1.2rem', borderRadius: '8px', border: 'none', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 2px 4px rgba(16,185,129,0.2)' }}
+              >
+                {templateSaveStatus === 'loading' ? 'Saving...' : templateSaveStatus === 'success' ? '✔ Templates Saved' : '💾 Save All Templates'}
+              </button>
             </div>
 
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', background: '#f1f5f9', padding: '4px', borderRadius: '8px' }}>
+                <button onClick={() => setTemplateEditorType('wa')} style={{ border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, background: templateEditorType === 'wa' ? 'white' : 'transparent', color: templateEditorType === 'wa' ? '#10b981' : '#64748b' }}>WhatsApp</button>
+                <button onClick={() => setTemplateEditorType('email')} style={{ border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, background: templateEditorType === 'email' ? 'white' : 'transparent', color: templateEditorType === 'email' ? '#ea4335' : '#64748b' }}>Email</button>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {['welcome', 'rem1', 'rem2', 'rem3'].map((tab) => (
+                  <button key={tab} onClick={() => setActiveTemplateTab(tab)} style={{ padding: '0.5rem 1rem', border: 'none', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', background: activeTemplateTab === tab ? '#334155' : '#f1f5f9', color: activeTemplateTab === tab ? 'white' : '#475569' }}>
+                    {tab === 'welcome' ? 'Welcome' : `Rem ${tab.slice(-1)}`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Formatting Toolbar */}
+            <div style={{ display: 'flex', gap: '8px', background: '#f8fafc', padding: '10px', borderRadius: '8px 8px 0 0', border: '1px solid #cbd5e1', borderBottom: 'none' }}>
+              <button onClick={() => applyFormatting('B')} style={{ width: '32px', height: '32px', border: '1px solid #cbd5e1', background: 'white', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }} title="Bold (WhatsApp)">B</button>
+              <button onClick={() => applyFormatting('I')} style={{ width: '32px', height: '32px', border: '1px solid #cbd5e1', background: 'white', borderRadius: '4px', fontStyle: 'italic', cursor: 'pointer' }} title="Italic (WhatsApp)">I</button>
+              <button onClick={() => applyFormatting('S')} style={{ width: '32px', height: '32px', border: '1px solid #cbd5e1', background: 'white', borderRadius: '4px', textDecoration: 'line-through', cursor: 'pointer' }} title="Strikethrough (WhatsApp)">S</button>
+              <div style={{ width: '1px', background: '#cbd5e1', margin: '0 4px' }}></div>
+              <button onClick={() => applyFormatting('NAME')} style={{ padding: '0 10px', height: '32px', border: '1px solid #cbd5e1', background: 'white', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, color: '#6366f1', cursor: 'pointer' }} title="Insert Name Placeholder">➕ [NAME]</button>
+              <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: '#94a3b8', alignSelf: 'center' }}>Formatting works best for WhatsApp</span>
+            </div>
+            
             {templateEditorType === 'wa' ? (
               <textarea 
+                id="template-editor"
                 value={waTemplates[activeTemplateTab]} 
                 onChange={handleTemplateChange}
-                style={{ width: '100%', height: '350px', padding: '1.25rem', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit', outline: 'none' }}
+                style={{ width: '100%', height: '350px', padding: '1.25rem', borderRadius: '0 0 12px 12px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit', outline: 'none' }}
                 onFocus={(e)=>e.target.style.borderColor='#10b981'} onBlur={(e)=>e.target.style.borderColor='#cbd5e1'}
               />
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', border: '1px solid #cbd5e1', borderRadius: '0 0 12px 12px', padding: '1.5rem', gap: '1.5rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.4rem' }}>Email Subject Line</label>
                   <input type="text" name="subject" value={emailTemplates[activeTemplateTab].subject} onChange={handleTemplateChange} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem', fontWeight: 600 }} />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.4rem' }}>Email Body Content</label>
-                  <textarea name="body" value={emailTemplates[activeTemplateTab].body} onChange={handleTemplateChange} style={{ width: '100%', height: '300px', padding: '1.25rem', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit', outline: 'none' }} />
+                  <textarea id="template-editor" name="body" value={emailTemplates[activeTemplateTab].body} onChange={handleTemplateChange} style={{ width: '100%', height: '300px', padding: '1.25rem', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit', outline: 'none' }} />
                 </div>
               </div>
             )}
