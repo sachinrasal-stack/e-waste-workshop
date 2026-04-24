@@ -48,23 +48,23 @@ export default function AdminDashboard() {
         rem3: `Dear [NAME],\n\nThe E-waste Awareness Workshop is starting right now! Please click the link below to join us.\n\nJoin Link: ${settingsData.link}\n\nSee you inside!\n\nBest Regards,\nTeam ProSAR`
       });
 
-      // Initialize Email Templates (Professional)
+      // Initialize Email Templates (Professional & Structured)
       setEmailTemplates({
         welcome: {
           subject: `Confirmed: Your Registration for the E-Waste Awareness Workshop`,
-          body: `Dear [NAME],\n\nThank you for taking a proactive step towards environmental responsibility by registering for our upcoming E-Waste Awareness Workshop.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nWe will explore real-world stories and practical steps to manage electronic waste legally and safely. We look forward to seeing you there!\n\nBest Regards,\nTeam ProSAR`
+          body: `Dear [NAME],\n\nThank you for taking a proactive step towards environmental responsibility by registering for our upcoming E-Waste Awareness Workshop.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nIn this session, we will explore real-world stories and practical steps to manage electronic waste legally and safely.\n\nWe look forward to seeing you there!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
         },
         rem1: {
           subject: `Upcoming: E-Waste Awareness Workshop Reminder`,
-          body: `Dear [NAME],\n\nThis is a friendly reminder for our upcoming workshop on sustainable e-waste management. Please ensure you have marked your calendar.\n\nDate: ${settingsData.date}\nTime: ${settingsData.time}\nJoin Link: ${settingsData.link}\n\nSee you soon!\n\nBest Regards,\nTeam ProSAR`
+          body: `Dear [NAME],\n\nThis is a friendly reminder for our upcoming workshop on sustainable e-waste management.\n\nAs a responsible citizen, your participation is vital in protecting our environment from hazardous electronic waste.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nPlease ensure you have marked your calendar. See you soon!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
         },
         rem2: {
           subject: `Reminder: Our E-Waste Workshop is Tomorrow!`,
-          body: `Dear [NAME],\n\nWe are excited to see you tomorrow for the E-Waste Awareness Workshop. Get ready to learn how you can make a real difference.\n\nDate: ${settingsData.date}\nTime: ${settingsData.time}\nJoin Link: ${settingsData.link}\n\nBest Regards,\nTeam ProSAR`
+          body: `Dear [NAME],\n\nWe are excited to see you tomorrow for the E-Waste Awareness Workshop! \n\nGet ready to learn how you can make a real difference in the way we handle electronic waste at home and in the workplace.\n\nWorkshop Details:\n📅 Date: ${settingsData.date}\n🕓 Time: ${settingsData.time}\n🔗 Join Link: ${settingsData.link}\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
         },
         rem3: {
           subject: `🔴 LIVE NOW: Join the E-Waste Awareness Workshop`,
-          body: `Dear [NAME],\n\nThe E-Waste Awareness Workshop is starting right now! Click the link below to join the session immediately.\n\nJoin Link: ${settingsData.link}\n\nWe are waiting for you!\n\nBest Regards,\nTeam ProSAR`
+          body: `Dear [NAME],\n\nThe E-Waste Awareness Workshop is starting right now!\n\nPlease click the link below to join the session immediately:\n\n🔗 Join Link: ${settingsData.link}\n\nWe are waiting for you inside!\n\nBest Regards,\n\nTeam ProSAR\nProSAR EcoTech Pvt Ltd\nwww.prosar.in`
         }
       });
     } catch (err) {
@@ -122,7 +122,9 @@ export default function AdminDashboard() {
     const template = emailTemplates[type] || emailTemplates.welcome;
     const subject = encodeURIComponent(template.subject);
     let body = template.body.replace(/\[NAME\]/g, user.fullName);
-    return `mailto:${user.email}?subject=${subject}&body=${encodeURIComponent(body)}`;
+    // Use %0D%0A for newlines to ensure compatibility across all email clients
+    const encodedBody = encodeURIComponent(body).replace(/%0A/g, '%0D%0A');
+    return `mailto:${user.email}?subject=${subject}&body=${encodedBody}`;
   };
 
   const exportToCSV = () => {
